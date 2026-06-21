@@ -1,3 +1,4 @@
+@using Microsoft.AspNetCore.Http
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 @{
     var cartJson = HttpContextAccessor.HttpContext?.Session.GetString("Cart");
@@ -259,7 +260,7 @@
 
         <!-- Cart Items List -->
         <div class="flex-grow overflow-y-auto p-6 space-y-4">
-            @if (cartItems == null || cartItems.Count == 0)
+            @if (cartItems == null || !cartItems.Any())
             {
                 <div class="text-center py-20">
                     <div class="inline-flex p-4 rounded-full bg-gray-50 text-gray-400 mb-4">
@@ -301,7 +302,7 @@
         </div>
 
         <!-- Checkout Form / Footer -->
-        @if (cartItems != null && cartItems.Count > 0)
+        @if (cartItems != null && cartItems.Any())
         {
             <div class="border-t border-gray-100 p-6 bg-gray-50 space-y-4">
                 <div class="flex justify-between items-center text-sm">
