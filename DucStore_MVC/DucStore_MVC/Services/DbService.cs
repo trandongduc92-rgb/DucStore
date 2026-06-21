@@ -2,7 +2,12 @@ using System;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 using DucStore_MVC.Models;
+using DucStore_MVC.Data;
 
 namespace DucStore_MVC.Services
 {
@@ -17,14 +22,20 @@ namespace DucStore_MVC.Services
         private readonly string _filePath;
         private readonly string _imagesPath;
         private static readonly object _lock = new();
+        private readonly IServiceProvider _serviceProvider;
+        private readonly bool _useSqlServer;
 
-        public DbService(IWebHostEnvironment env)
+        public DbService(IWebHostEnvironment env, IServiceProvider serviceProvider, IConfiguration configuration)
         {
-            // Path inside the project’s local directory
+            _serviceProvider = serviceProvider;
             _filePath = Path.Combine(env.ContentRootPath, "Data", "db.json");
             _imagesPath = Path.Combine(env.WebRootPath, "images");
 
-            // Ensure directory exists
+            // Kiểm tra xem có cấu hình Connection String của SQL Server hay không
+            var connStr = configuration.GetConnectionString("DefaultConnection");
+            _useSqlServer = !string.IsNullOrEmpty(connStr);
+
+            // Tạo thư mục nếu chưa tồn tại
             var dir = Path.GetDirectoryName(_filePath);
             if (dir != null && !Directory.Exists(dir))
             {
@@ -36,11 +47,40 @@ namespace DucStore_MVC.Services
                 Directory.CreateDirectory(_imagesPath);
             }
 
-            SeedDefaultData();
+            if (!_useSqlServer)
+            {
+                SeedDefaultData();
+            }
         }
 
         public async Task<FullDatabase> GetDatabaseAsync()
         {
+            if (_useSqlServer)
+            {
+                try
+                {
+                    using (var scope = _serviceProvider.CreateScope())
+                    {
+                        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                        var db = new FullDatabase
+                        {
+                            DanhMuc = await context.DanhMuc.AsNoTracking().ToListAsync(),
+                            SanPham = await context.SanPham.AsNoTracking().ToListAsync(),
+                            KhachHang = await context.KhachHang.AsNoTracking().ToListAsync(),
+                            DonHang = await context.DonHang.AsNoTracking().ToListAsync(),
+                            ChiTietDonHang = await context.ChiTietDonHang.AsNoTracking().ToListAsync(),
+                            TaiKhoanAdmin = await context.TaiKhoanAdmin.AsNoTracking().ToListAsync()
+                        };
+                        return db;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"SQL Server Get Error: {ex.Message}. Falling back to db.json...");
+                }
+            }
+
+            // Fallback chế độ JSON file
             if (!File.Exists(_filePath))
             {
                 return new FullDatabase();
@@ -70,6 +110,109 @@ namespace DucStore_MVC.Services
 
         public async Task SaveDatabaseAsync(FullDatabase db)
         {
+            if (_useSqlServer)
+            {
+                try
+                {
+                    using (var scope = _serviceProvider.CreateScope())
+                    {
+                        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+                        // 1. Đồng bộ DanhMuc
+                        var existingDanhMuc = await context.DanhMuc.ToListAsync();
+                        foreach (var item in db.DanhMuc)
+                        {
+                            var existing = existingDanhMuc.FirstOrDefault(d => d.MaDanhMuc == item.MaDanhMuc);
+                            if (existing == null) context.DanhMuc.Add(item);
+                            else context.Entry(existing).CurrentValues.SetValues(item);
+                        }
+                        foreach (var existing in existingDanhMuc)
+                        {
+                            if (!db.DanhMuc.Any(d => d.MaDanhMuc == existing.MaDanhMuc))
+                                context.DanhMuc.Remove(existing);
+                        }
+
+                        // 2. Đồng bộ SanPham
+                        var existingSanPham = await context.SanPham.ToListAsync();
+                        foreach (var item in db.SanPham)
+                        {
+                            var existing = existingSanPham.FirstOrDefault(s => s.MaSanPham == item.MaSanPham);
+                            if (existing == null) context.SanPham.Add(item);
+                            else context.Entry(existing).CurrentValues.SetValues(item);
+                        }
+                        foreach (var existing in existingSanPham)
+                        {
+                            if (!db.SanPham.Any(s => s.MaSanPham == existing.MaSanPham))
+                                context.SanPham.Remove(existing);
+                        }
+
+                        // 3. Đồng bộ KhachHang
+                        var existingKhachHang = await context.KhachHang.ToListAsync();
+                        foreach (var item in db.KhachHang)
+                        {
+                            var existing = existingKhachHang.FirstOrDefault(k => k.MaKhachHang == item.MaKhachHang);
+                            if (existing == null) context.KhachHang.Add(item);
+                            else context.Entry(existing).CurrentValues.SetValues(item);
+                        }
+                        foreach (var existing in existingKhachHang)
+                        {
+                            if (!db.KhachHang.Any(k => k.MaKhachHang == existing.MaKhachHang))
+                                context.KhachHang.Remove(existing);
+                        }
+
+                        // 4. Đồng bộ DonHang
+                        var existingDonHang = await context.DonHang.ToListAsync();
+                        foreach (var item in db.DonHang)
+                        {
+                            var existing = existingDonHang.FirstOrDefault(d => d.MaDonHang == item.MaDonHang);
+                            if (existing == null) context.DonHang.Add(item);
+                            else context.Entry(existing).CurrentValues.SetValues(item);
+                        }
+                        foreach (var existing in existingDonHang)
+                        {
+                            if (!db.DonHang.Any(d => d.MaDonHang == existing.MaDonHang))
+                                context.DonHang.Remove(existing);
+                        }
+
+                        // 5. Đồng bộ ChiTietDonHang
+                        var existingChiTiet = await context.ChiTietDonHang.ToListAsync();
+                        foreach (var item in db.ChiTietDonHang)
+                        {
+                            var existing = existingChiTiet.FirstOrDefault(c => c.MaChiTiet == item.MaChiTiet);
+                            if (existing == null) context.ChiTietDonHang.Add(item);
+                            else context.Entry(existing).CurrentValues.SetValues(item);
+                        }
+                        foreach (var existing in existingChiTiet)
+                        {
+                            if (!db.ChiTietDonHang.Any(c => c.MaChiTiet == existing.MaChiTiet))
+                                context.ChiTietDonHang.Remove(existing);
+                        }
+
+                        // 6. Đồng bộ TaiKhoanAdmin
+                        var existingAdmin = await context.TaiKhoanAdmin.ToListAsync();
+                        foreach (var item in db.TaiKhoanAdmin)
+                        {
+                            var existing = existingAdmin.FirstOrDefault(a => a.TenDangNhap == item.TenDangNhap);
+                            if (existing == null) context.TaiKhoanAdmin.Add(item);
+                            else context.Entry(existing).CurrentValues.SetValues(item);
+                        }
+                        foreach (var existing in existingAdmin)
+                        {
+                            if (!db.TaiKhoanAdmin.Any(a => a.TenDangNhap == existing.TenDangNhap))
+                                context.TaiKhoanAdmin.Remove(existing);
+                        }
+
+                        await context.SaveChangesAsync();
+                        return;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"SQL Server Save Error: {ex.Message}. Falling back to db.json...");
+                }
+            }
+
+            // Fallback chế độ JSON file
             try
             {
                 var options = new JsonSerializerOptions

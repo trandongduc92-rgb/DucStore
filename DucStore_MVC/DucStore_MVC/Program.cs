@@ -1,4 +1,6 @@
 using DucStore_MVC.Services;
+using Microsoft.EntityFrameworkCore;
+using DucStore_MVC.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +20,23 @@ builder.Services.AddSession(options =>
 // Configure context accessor for session inside helper wrappers if needed
 builder.Services.AddHttpContextAccessor();
 
-// Register the custom JSON Database service 
+// Register WebApplication DB Context
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    if (!string.IsNullOrEmpty(connectionString))
+    {
+        options.UseSqlServer(connectionString);
+    }
+    else
+    {
+        // Use SqlServer with dummy credentials to satisfy registration 
+        // without raising database connectivity error in non-SQLServer environment
+        options.UseSqlServer("Server=dummy;Database=dummy;Trusted_Connection=True;TrustServerCertificate=True;");
+    }
+});
+
+// Register the custom JSON Database service with SqlServer Sync Support
 builder.Services.AddSingleton<IDbService, DbService>();
 
 var app = builder.Build();
