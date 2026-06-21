@@ -1,0 +1,6 @@
+{
+  "name": "DucStore",
+  "description": "Website bán hàng công nghệ Apple chuyên nghiệp - Cung cấp iPhone và iPad chính hãng chất lượng cao",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

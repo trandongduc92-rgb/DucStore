@@ -1,0 +1,257 @@
+{
+  "DanhMuc": [
+    {
+      "MaDanhMuc": "iphone",
+      "TenDanhMuc": "iPhone"
+    },
+    {
+      "MaDanhMuc": "ipad",
+      "TenDanhMuc": "iPad"
+    }
+  ],
+  "SanPham": [
+    {
+      "MaSanPham": "ip-15-pro-max",
+      "TenSanPham": "iPhone 15 Pro Max 256GB",
+      "Gia": 29990000,
+      "MoTa": "iPhone mạnh mẽ nhất thế giới với khung viền titan siêu nhẹ, nút Tác vụ thông minh, vi xử lý A17 Pro hiệu chuẩn trò chơi và camera thu phóng 5x hoàn hảo.",
+      "MaDanhMuc": "iphone",
+      "HinhAnh": "iphone15promax.jpg"
+    },
+    {
+      "MaSanPham": "ip-15",
+      "TenSanPham": "iPhone 15 128GB",
+      "Gia": 19790000,
+      "MoTa": "Sở hữu Dynamic Island đột phá, mặt lưng kính pha màu tinh tế, sạc cổng USB-C tiện dụng cùng hệ thống camera chính 48MP siêu nét.",
+      "MaDanhMuc": "iphone",
+      "HinhAnh": "iphone15.jpg"
+    },
+    {
+      "MaSanPham": "ip-14",
+      "TenSanPham": "iPhone 14 128GB",
+      "Gia": 16490000,
+      "MoTa": "Hiệu năng bền bỉ vượt trội từ chip A15 Bionic cải tiến, hệ thống camera chụp đêm ấn tượng và thời lượng pin sử dụng cả ngày dài.",
+      "MaDanhMuc": "iphone",
+      "HinhAnh": "iphone14.jpg"
+    },
+    {
+      "MaSanPham": "ipad-pro-m4",
+      "TenSanPham": "iPad Pro M4 11 inch Wi-Fi 256GB",
+      "Gia": 28490000,
+      "MoTa": "Mỏng nhẹ đột phá kết hợp chip M4 cực mạnh thách thức mọi phần mềm đồ họa, đi kèm màn hình Tandem OLED Ultra Retina XDR siêu thực đại tài.",
+      "MaDanhMuc": "ipad",
+      "HinhAnh": "ipadpro.jpg"
+    },
+    {
+      "MaSanPham": "ipad-air-m2",
+      "TenSanPham": "iPad Air M2 11 inch Wi-Fi 128GB",
+      "Gia": 16990000,
+      "MoTa": "Trang bị sức mạnh của dòng chip Apple M2 chuyên nghiệp, camera FaceTime 12MP nằm ngang cân đối, lý tưởng cho ghi chép số hóa và học tập.",
+      "MaDanhMuc": "ipad",
+      "HinhAnh": "ipadair.jpg"
+    },
+    {
+      "MaSanPham": "ipad-gen-10",
+      "TenSanPham": "iPad 10.9 inch Gen 10 Wi-Fi 64GB",
+      "Gia": 9490000,
+      "MoTa": "Diện mạo trẻ trung cá tính với màn hình tràn cạnh sắc màu rực rỡ, chip A14 Bionic nhanh nhẹn cùng kết nối Wi-Fi 6 ổn định.",
+      "MaDanhMuc": "ipad",
+      "HinhAnh": "ipad10.jpg"
+    }
+  ],
+  "KhachHang": [
+    {
+      "MaKhachHang": "kh-1",
+      "TenKhachHang": "Trần Đông Đức",
+      "Email": "trandongduc92@gmail.com",
+      "MatKhau": "123456",
+      "DienThoai": "0987654321",
+      "DiaChi": "Hà Nội, Việt Nam"
+    }
+  ],
+  "DonHang": [
+    {
+      "MaDonHang": "dh-17511001",
+      "MaKhachHang": "kh-1",
+      "TenKhachHang": "Trần Đông Đức",
+      "NgayDat": "2026-06-15T10:30:00.000Z",
+      "TongTien": 49780000,
+      "TrangThai": "Đã duyệt",
+      "DiaChiGiaoHang": "Hà Nội, Việt Nam"
+    },
+    {
+      "MaDonHang": "dh-17511002",
+      "MaKhachHang": "kh-guest",
+      "TenKhachHang": "Nguyễn Văn Hải",
+      "NgayDat": "2026-05-20T14:20:00.000Z",
+      "TongTien": 29990000,
+      "TrangThai": "Đã duyệt",
+      "DiaChiGiaoHang": "Thủ Đức, TP. Hồ Chí Minh"
+    },
+    {
+      "MaDonHang": "dh-17511003",
+      "MaKhachHang": "kh-guest",
+      "TenKhachHang": "Lê Thị Hồng",
+      "NgayDat": "2026-05-10T16:45:00.000Z",
+      "TongTien": 16990000,
+      "TrangThai": "Đã duyệt",
+      "DiaChiGiaoHang": "Hải Châu, Đà Nẵng"
+    },
+    {
+      "MaDonHang": "dh-17511004",
+      "MaKhachHang": "kh-guest",
+      "TenKhachHang": "Phạm Minh Quân",
+      "NgayDat": "2026-04-12T09:15:00.000Z",
+      "TongTien": 19790000,
+      "TrangThai": "Đã duyệt",
+      "DiaChiGiaoHang": "Ninh Kiều, Cần Thơ"
+    },
+    {
+      "MaDonHang": "dh-17511005",
+      "MaKhachHang": "kh-1",
+      "TenKhachHang": "Trần Đông Đức",
+      "NgayDat": "2026-03-24T11:00:00.000Z",
+      "TongTien": 28490000,
+      "TrangThai": "Đã duyệt",
+      "DiaChiGiaoHang": "Hà Nội, Việt Nam"
+    },
+    {
+      "MaDonHang": "dh-17511006",
+      "MaKhachHang": "kh-guest",
+      "TenKhachHang": "Đỗ Hoàng Nam",
+      "NgayDat": "2026-03-05T15:30:00.000Z",
+      "TongTien": 9490000,
+      "TrangThai": "Đã duyệt",
+      "DiaChiGiaoHang": "Vũng Tàu, BR-VT"
+    },
+    {
+      "MaDonHang": "dh-17511007",
+      "MaKhachHang": "kh-guest",
+      "TenKhachHang": "Vũ Anh Tuấn",
+      "NgayDat": "2026-02-18T14:10:00.000Z",
+      "TongTien": 29990000,
+      "TrangThai": "Đã duyệt",
+      "DiaChiGiaoHang": "Hạ Long, Quảng Ninh"
+    },
+    {
+      "MaDonHang": "dh-17511008",
+      "MaKhachHang": "kh-guest",
+      "TenKhachHang": "Hoàng Thu Trang",
+      "NgayDat": "2026-01-22T10:05:00.000Z",
+      "TongTien": 29990000,
+      "TrangThai": "Đã duyệt",
+      "DiaChiGiaoHang": "Hồng Bàng, Hải Phòng"
+    },
+    {
+      "MaDonHang": "dh-17511009",
+      "MaKhachHang": "kh-guest",
+      "TenKhachHang": "Phan Thanh Sơn",
+      "NgayDat": "2025-11-15T16:20:00.000Z",
+      "TongTien": 19790000,
+      "TrangThai": "Đã duyệt",
+      "DiaChiGiaoHang": "Biên Hòa, Đồng Nai"
+    },
+    {
+      "MaDonHang": "dh-17511010",
+      "MaKhachHang": "kh-guest",
+      "TenKhachHang": "Nguyễn Khánh Linh",
+      "NgayDat": "2025-12-20T13:40:00.000Z",
+      "TongTien": 58480000,
+      "TrangThai": "Đã duyệt",
+      "DiaChiGiaoHang": "Hai Bà Trưng, Hà Nội"
+    }
+  ],
+  "ChiTietDonHang": [
+    {
+      "MaChiTiet": "ct-1",
+      "MaDonHang": "dh-17511001",
+      "MaSanPham": "ip-15-pro-max",
+      "SoLuong": 1,
+      "DonGia": 29990000
+    },
+    {
+      "MaChiTiet": "ct-2",
+      "MaDonHang": "dh-17511001",
+      "MaSanPham": "ip-15",
+      "SoLuong": 1,
+      "DonGia": 19790000
+    },
+    {
+      "MaChiTiet": "ct-3",
+      "MaDonHang": "dh-17511002",
+      "MaSanPham": "ip-15-pro-max",
+      "SoLuong": 1,
+      "DonGia": 29990000
+    },
+    {
+      "MaChiTiet": "ct-4",
+      "MaDonHang": "dh-17511003",
+      "MaSanPham": "ipad-air-m2",
+      "SoLuong": 1,
+      "DonGia": 16990000
+    },
+    {
+      "MaChiTiet": "ct-5",
+      "MaDonHang": "dh-17511004",
+      "MaSanPham": "ip-15",
+      "SoLuong": 1,
+      "DonGia": 19790000
+    },
+    {
+      "MaChiTiet": "ct-6",
+      "MaDonHang": "dh-17511005",
+      "MaSanPham": "ipad-pro-m4",
+      "SoLuong": 1,
+      "DonGia": 28490000
+    },
+    {
+      "MaChiTiet": "ct-7",
+      "MaDonHang": "dh-17511006",
+      "MaSanPham": "ipad-gen-10",
+      "SoLuong": 1,
+      "DonGia": 9490000
+    },
+    {
+      "MaChiTiet": "ct-8",
+      "MaDonHang": "dh-17511007",
+      "MaSanPham": "ip-15-pro-max",
+      "SoLuong": 1,
+      "DonGia": 29990000
+    },
+    {
+      "MaChiTiet": "ct-9",
+      "MaDonHang": "dh-17511008",
+      "MaSanPham": "ip-15-pro-max",
+      "SoLuong": 1,
+      "DonGia": 29990000
+    },
+    {
+      "MaChiTiet": "ct-10",
+      "MaDonHang": "dh-17511009",
+      "MaSanPham": "ip-15",
+      "SoLuong": 1,
+      "DonGia": 19790000
+    },
+    {
+      "MaChiTiet": "ct-11",
+      "MaDonHang": "dh-17511010",
+      "MaSanPham": "ip-15-pro-max",
+      "SoLuong": 1,
+      "DonGia": 29990000
+    },
+    {
+      "MaChiTiet": "ct-12",
+      "MaDonHang": "dh-17511010",
+      "MaSanPham": "ipad-pro-m4",
+      "SoLuong": 1,
+      "DonGia": 28490000
+    }
+  ],
+  "TaiKhoanAdmin": [
+    {
+      "TenDangNhap": "admin",
+      "MatKhau": "admin123",
+      "HoTen": "Đức Admin"
+    }
+  ]
+}
