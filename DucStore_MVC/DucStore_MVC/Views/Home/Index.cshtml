@@ -5,13 +5,6 @@
     var searchQuery = ViewBag.SearchQuery as string;
 }
 
-@model List<DucStore_MVC.Models.SanPham>
-@{
-    var categories = ViewBag.Categories as List<DucStore_MVC.Models.DanhMuc> ?? new List<DanhMuc>();
-    var selectedCategory = ViewBag.SelectedCategory as string;
-    var searchQuery = ViewBag.SearchQuery as string;
-}
-
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 mt-6">
     <!-- SLIDER HERO BANNER MATCHING IMAGE 2 EXACTLY -->
     <div class="relative overflow-hidden bg-[#121214] rounded-[2rem] p-8 sm:p-12 md:p-16 flex flex-col md:flex-row items-center justify-between gap-12 shadow-2xl border border-white/5 group">
