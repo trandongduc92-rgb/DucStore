@@ -1,0 +1,203 @@
+{
+  "DanhMuc": [
+    {
+      "MaDanhMuc": "ipad",
+      "TenDanhMuc": "iPad"
+    },
+    {
+      "MaDanhMuc": "iphone",
+      "TenDanhMuc": "iPhone"
+    }
+  ],
+  "SanPham": [
+    {
+      "MaSanPham": "ipad-a16-5g-128",
+      "TenSanPham": "iPad A16 5G 128GB",
+      "Gia": 16990000.00,
+      "MoTa": "Phi\u00EAn b\u1EA3n c\u00F3 5G, ti\u1EC7n l\u1EE3i cho h\u1ECDc t\u1EADp v\u00E0 l\u00E0m vi\u1EC7c m\u1ECDi n\u01A1i.",
+      "MaDanhMuc": "ipad",
+      "HinhAnh": "ipad-a16-5g.jpg"
+    },
+    {
+      "MaSanPham": "ipad-a16-wifi-128",
+      "TenSanPham": "iPad A16 WiFi 128GB",
+      "Gia": 9390000.00,
+      "MoTa": "iPad A16 Gen 11 gi\u00E1 d\u1EC5 ti\u1EBFp c\u1EADn, ph\u00F9 h\u1EE3p h\u1ECDc sinh sinh vi\u00EAn v\u00E0 nhu c\u1EA7u c\u01A1 b\u1EA3n.",
+      "MaDanhMuc": "ipad",
+      "HinhAnh": "ipad-a16.jpg"
+    },
+    {
+      "MaSanPham": "ipad-a16-wifi-256",
+      "TenSanPham": "iPad A16 WiFi 256GB",
+      "Gia": 12390000.00,
+      "MoTa": "Dung l\u01B0\u1EE3ng 256GB tho\u1EA3i m\u00E1i l\u01B0u t\u00E0i li\u1EC7u, \u1EA3nh, video v\u00E0 \u1EE9ng d\u1EE5ng h\u1ECDc t\u1EADp.",
+      "MaDanhMuc": "ipad",
+      "HinhAnh": "ipad-a16.jpg"
+    },
+    {
+      "MaSanPham": "ipad-air-m4-11-128",
+      "TenSanPham": "iPad Air M4 11 inch WiFi 128GB",
+      "Gia": 16990000.00,
+      "MoTa": "iPad Air M4 m\u1ECFng nh\u1EB9, hi\u1EC7u n\u0103ng t\u1ED1t, ph\u00F9 h\u1EE3p sinh vi\u00EAn, v\u0103n ph\u00F2ng v\u00E0 gi\u1EA3i tr\u00ED.",
+      "MaDanhMuc": "ipad",
+      "HinhAnh": "ipad-air-m4-11.jpg"
+    },
+    {
+      "MaSanPham": "ipad-air-m4-11-5g-128",
+      "TenSanPham": "iPad Air M4 11 inch 5G 128GB",
+      "Gia": 25190000.00,
+      "MoTa": "C\u00F3 k\u1EBFt n\u1ED1i 5G ti\u1EC7n l\u1EE3i, d\u00F9ng t\u1ED1t khi di chuy\u1EC3n, h\u1ECDc t\u1EADp v\u00E0 l\u00E0m vi\u1EC7c m\u1ECDi n\u01A1i.",
+      "MaDanhMuc": "ipad",
+      "HinhAnh": "ipad-air-m4-11.jpg"
+    },
+    {
+      "MaSanPham": "ipad-air-m4-13-128",
+      "TenSanPham": "iPad Air M4 13 inch WiFi 128GB",
+      "Gia": 26490000.00,
+      "MoTa": "M\u00E0n h\u00ECnh 13 inch r\u1ED9ng r\u00E3i, chip M4 m\u1EA1nh m\u1EBD, ph\u00F9 h\u1EE3p ghi ch\u00FA v\u00E0 \u0111a nhi\u1EC7m.",
+      "MaDanhMuc": "ipad",
+      "HinhAnh": "ipad-air-m4-13.jpg"
+    },
+    {
+      "MaSanPham": "ipad-mini-7-wifi-128",
+      "TenSanPham": "iPad mini 7 WiFi 128GB",
+      "Gia": 16490000.00,
+      "MoTa": "iPad mini 7 nh\u1ECF g\u1ECDn, hi\u1EC7u n\u0103ng m\u1EA1nh, ph\u00F9 h\u1EE3p \u0111\u1ECDc s\u00E1ch, ghi ch\u00FA v\u00E0 gi\u1EA3i tr\u00ED.",
+      "MaDanhMuc": "ipad",
+      "HinhAnh": "ipad-mini-7.jpg"
+    },
+    {
+      "MaSanPham": "ipad-pro-m5-11-256",
+      "TenSanPham": "iPad Pro M5 11 inch WiFi 256GB",
+      "Gia": 28390000.00,
+      "MoTa": "iPad Pro M5 11 inch hi\u1EC7u n\u0103ng c\u1EF1c m\u1EA1nh, m\u00E0n h\u00ECnh \u0111\u1EB9p, ph\u00F9 h\u1EE3p h\u1ECDc t\u1EADp v\u00E0 l\u00E0m vi\u1EC7c.",
+      "MaDanhMuc": "ipad",
+      "HinhAnh": "ipad-pro-m5-11.jpg"
+    },
+    {
+      "MaSanPham": "ipad-pro-m5-11-512",
+      "TenSanPham": "iPad Pro M5 11 inch WiFi 512GB",
+      "Gia": 34190000.00,
+      "MoTa": "Dung l\u01B0\u1EE3ng l\u1EDBn 512GB, ph\u00F9 h\u1EE3p l\u01B0u tr\u1EEF t\u00E0i li\u1EC7u, \u1EA3nh, video v\u00E0 \u1EE9ng d\u1EE5ng n\u1EB7ng.",
+      "MaDanhMuc": "ipad",
+      "HinhAnh": "ipad-pro-m5-11.jpg"
+    },
+    {
+      "MaSanPham": "ipad-pro-m5-13-256",
+      "TenSanPham": "iPad Pro M5 13 inch WiFi 256GB",
+      "Gia": 45590000.00,
+      "MoTa": "M\u00E0n h\u00ECnh l\u1EDBn 13 inch, hi\u1EC7u n\u0103ng m\u1EA1nh, ph\u00F9 h\u1EE3p l\u00E0m vi\u1EC7c s\u00E1ng t\u1EA1o v\u00E0 gi\u1EA3i tr\u00ED cao c\u1EA5p.",
+      "MaDanhMuc": "ipad",
+      "HinhAnh": "ipad-pro-m5-13.jpg"
+    },
+    {
+      "MaSanPham": "iphone-13",
+      "TenSanPham": "iPhone 13 128GB",
+      "Gia": 11990000.00,
+      "MoTa": "Nh\u1ECF g\u1ECDn, hi\u1EC7u n\u0103ng t\u1ED1t, gi\u00E1 d\u1EC5 ti\u1EBFp c\u1EADn.",
+      "MaDanhMuc": "iphone",
+      "HinhAnh": "iphone13.jpg"
+    },
+    {
+      "MaSanPham": "iphone-14-promax",
+      "TenSanPham": "iPhone 14 Pro Max",
+      "Gia": 17590000.00,
+      "MoTa": "iPhone 14 Pro Max m\u00E0n h\u00ECnh Dynamic Island, hi\u1EC7u n\u0103ng m\u1EA1nh m\u1EBD, camera chuy\u00EAn nghi\u1EC7p v\u00E0 pin b\u1EC1n b\u1EC9.",
+      "MaDanhMuc": "iphone",
+      "HinhAnh": "iphone14promax.jpg"
+    },
+    {
+      "MaSanPham": "iphone-15-plus",
+      "TenSanPham": "iPhone 15 Plus",
+      "Gia": 17990000.00,
+      "MoTa": "M\u00E0n h\u00ECnh l\u1EDBn, pin b\u1EC1n b\u1EC9, hi\u1EC7u n\u0103ng m\u01B0\u1EE3t m\u00E0.",
+      "MaDanhMuc": "iphone",
+      "HinhAnh": "iphone15plus.jpg"
+    },
+    {
+      "MaSanPham": "iphone-16",
+      "TenSanPham": "iPhone 16",
+      "Gia": 20290000.00,
+      "MoTa": "Thi\u1EBFt k\u1EBF tr\u1EBB trung, hi\u1EC7u n\u0103ng \u1ED5n \u0111\u1ECBnh.",
+      "MaDanhMuc": "iphone",
+      "HinhAnh": "iphone16.jpg"
+    },
+    {
+      "MaSanPham": "iphone-16e",
+      "TenSanPham": "iPhone 16e 512GB",
+      "Gia": 21290000.00,
+      "MoTa": "Dung l\u01B0\u1EE3ng l\u1EDBn, thi\u1EBFt k\u1EBF tinh t\u1EBF, hi\u1EC7u n\u0103ng \u1ED5n \u0111\u1ECBnh.",
+      "MaDanhMuc": "iphone",
+      "HinhAnh": "iphone16e.jpg"
+    },
+    {
+      "MaSanPham": "iphone-16-plus",
+      "TenSanPham": "iPhone 16 Plus",
+      "Gia": 23790000.00,
+      "MoTa": "M\u00E0n h\u00ECnh l\u1EDBn, pin t\u1ED1t, tr\u1EA3i nghi\u1EC7m m\u01B0\u1EE3t m\u00E0.",
+      "MaDanhMuc": "iphone",
+      "HinhAnh": "iphone16plus.jpg"
+    },
+    {
+      "MaSanPham": "iphone-17",
+      "TenSanPham": "iPhone 17",
+      "Gia": 23990000.00,
+      "MoTa": "iPhone th\u1EBF h\u1EC7 m\u1EDBi, thi\u1EBFt k\u1EBF hi\u1EC7n \u0111\u1EA1i, pin t\u1ED1t.",
+      "MaDanhMuc": "iphone",
+      "HinhAnh": "iphone17.jpg"
+    },
+    {
+      "MaSanPham": "iphone-17-pro",
+      "TenSanPham": "iPhone 17 Pro",
+      "Gia": 33890000.00,
+      "MoTa": "Camera n\u00E2ng c\u1EA5p, thi\u1EBFt k\u1EBF cao c\u1EA5p, hi\u1EC7u n\u0103ng v\u01B0\u1EE3t tr\u1ED9i.",
+      "MaDanhMuc": "iphone",
+      "HinhAnh": "iphone17pro.jpg"
+    },
+    {
+      "MaSanPham": "iphone-17-promax",
+      "TenSanPham": "iPhone 17 Pro Max",
+      "Gia": 35990000.00,
+      "MoTa": "iPhone cao c\u1EA5p nh\u1EA5t, hi\u1EC7u n\u0103ng m\u1EA1nh m\u1EBD, camera chuy\u00EAn nghi\u1EC7p.",
+      "MaDanhMuc": "iphone",
+      "HinhAnh": "iphone17promax.jpg"
+    },
+    {
+      "MaSanPham": "iphone-air",
+      "TenSanPham": "iPhone Air",
+      "Gia": 22990000.00,
+      "MoTa": "Thi\u1EBFt k\u1EBF m\u1ECFng nh\u1EB9, tinh t\u1EBF, hi\u1EC7u n\u0103ng m\u1EA1nh m\u1EBD.",
+      "MaDanhMuc": "iphone",
+      "HinhAnh": "iphoneair.jpg"
+    }
+  ],
+  "KhachHang": [],
+  "DonHang": [
+    {
+      "MaDonHang": "dh-82332d9b",
+      "MaKhachHang": "kh-guest",
+      "TenKhachHang": "Tr\u1EA7n \u0110\u00F4ng \u0110\u1EE9c",
+      "NgayDat": "2026-07-05T10:35:09.7683371+07:00",
+      "TongTien": 35990000.00,
+      "TrangThai": "Ch\u1EDD duy\u1EC7t",
+      "DiaChiGiaoHang": "H\u1ED3 Ch\u00ED Minh",
+      "HinhThucThanhToan": "Chuy\u1EC3n kho\u1EA3n"
+    }
+  ],
+  "ChiTietDonHang": [
+    {
+      "MaChiTiet": "ct-08e8bd1c",
+      "MaDonHang": "dh-82332d9b",
+      "MaSanPham": "iphone-17-promax",
+      "SoLuong": 1,
+      "DonGia": 35990000.00
+    }
+  ],
+  "TaiKhoanAdmin": [
+    {
+      "TenDangNhap": "admin",
+      "MatKhau": "DucStore@2026!",
+      "HoTen": "Đức Store"
+    }
+  ]
+}

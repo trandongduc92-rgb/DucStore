@@ -1,0 +1,218 @@
+@model DucStore_MVC.Models.SanPham
+@{
+    var related = ViewBag.RelatedProducts as List<DucStore_MVC.Models.SanPham> ?? new List<DucStore_MVC.Models.SanPham>();
+    var oldPrice = Model.Gia + 2000000;
+}
+
+<section class="detail-dark-page">
+    <div class="detail-container">
+
+        <div class="detail-breadcrumb">
+            <a href="/">Trang chủ</a> /
+            <a href="/?category=@Model.MaDanhMuc">@Model.MaDanhMuc</a> /
+            <b>@Model.TenSanPham</b>
+        </div>
+
+        <div class="detail-main">
+            <div class="detail-left">
+                <div class="detail-image-box">
+                    <img src="/images/@Model.HinhAnh" alt="@Model.TenSanPham" />
+                </div>
+
+                <div class="detail-thumbs">
+                    <div class="active"><img src="/images/@Model.HinhAnh" /></div>
+                    <div><img src="/images/@Model.HinhAnh" /></div>
+                    <div><img src="/images/@Model.HinhAnh" /></div>
+                </div>
+                @{
+                    var ten = Model.TenSanPham.ToLower();
+
+                    var manHinh = ten.Contains("ipad")
+                        ? (ten.Contains("13") ? "13 inch, Liquid Retina / Ultra Retina XDR" : "11 inch, Liquid Retina")
+                        : (ten.Contains("pro max") ? "6.9 inch, Super Retina XDR" : "6.1 inch, Super Retina XDR");
+
+                    var chip = ten.Contains("ipad pro") ? "Apple M5"
+                        : ten.Contains("ipad air") ? "Apple M4"
+                        : ten.Contains("ipad mini") ? "Apple A17 Pro"
+                        : ten.Contains("ipad") ? "Apple A16"
+                        : ten.Contains("17") ? "Apple A19 / A19 Pro"
+                        : ten.Contains("16") ? "Apple A18 / A18 Pro"
+                        : "Apple A15 / A16";
+
+                    var camera = ten.Contains("ipad")
+                        ? "Camera sau 12MP, camera trước 12MP"
+                        : "Camera chính 48MP, quay video 4K";
+
+                    var pin = ten.Contains("ipad")
+                        ? "Pin dùng cả ngày, sạc USB-C"
+                        : "Pin dùng cả ngày, sạc nhanh USB-C";
+
+                    var heDieuHanh = ten.Contains("ipad") ? "iPadOS" : "iOS";
+                }
+
+                <div class="detail-spec-box">
+                    <h2>Thông số kỹ thuật</h2>
+
+                    <div class="spec-row">
+                        <span>Màn hình</span>
+                        <strong>@manHinh</strong>
+                    </div>
+
+                    <div class="spec-row">
+                        <span>Chip xử lý</span>
+                        <strong>@chip</strong>
+                    </div>
+
+                    <div class="spec-row">
+                        <span>Dung lượng</span>
+                        <strong>128GB / 256GB / 512GB / 1TB</strong>
+                    </div>
+
+                    <div class="spec-row">
+                        <span>Camera</span>
+                        <strong>@camera</strong>
+                    </div>
+
+                    <div class="spec-row">
+                        <span>Pin & sạc</span>
+                        <strong>@pin</strong>
+                    </div>
+
+                    <div class="spec-row">
+                        <span>Hệ điều hành</span>
+                        <strong>@heDieuHanh</strong>
+                    </div>
+
+                    <div class="spec-row">
+                        <span>Bảo hành</span>
+                        <strong>Chính hãng 12 tháng</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-right">
+                <div class="detail-logo">
+                    <div class="detail-logo-icon">D</div>
+                    <div>
+                        <strong>DucStore</strong>
+                        <span>PREMIUM HUB</span>
+                    </div>
+                </div>
+
+                <h1>@Model.TenSanPham</h1>
+
+                <p class="detail-location">Giá và khuyến mãi tại: Thành phố Hồ Chí Minh</p>
+
+                <div class="detail-price-row">
+                    <strong id="detailPrice" data-base-price="@Model.Gia">
+                        @String.Format("{0:N0}đ", Model.Gia)
+                    </strong>
+                    <del>@String.Format("{0:N0}đ", oldPrice)</del>
+                    <span>-5%</span>
+                </div>
+
+                <div class="detail-point">🎁 +75.980 điểm tích lũy Quà Tặng VIP</div>
+
+                <div class="detail-option">
+                    <h4>Dung lượng</h4>
+                    <div class="detail-buttons capacity-buttons">
+                        <button type="button" class="active" data-plus="0">128GB</button>
+                        <button type="button" data-plus="1550000">256GB</button>
+                        <button type="button" data-plus="3100000">512GB</button>
+                        <button type="button" data-plus="5000000">1TB</button>
+                    </div>
+                </div>
+
+                <div class="detail-option">
+                    <h4>Màu: Cá nhân hóa DucStore</h4>
+                    <div class="detail-colors">
+                        <span class="color-orange active"></span>
+                        <span class="color-white"></span>
+                        <span class="color-dark"></span>
+                    </div>
+                </div>
+
+                <div class="detail-promo">
+                    <h3>Khuyến mãi</h3>
+                    <p>Giá và khuyến mãi dự kiến áp dụng đến 23:59 hôm nay</p>
+                    <ul>
+                        <li>Giảm giá 2,000,000đ áp dụng trực tiếp vào giá sản phẩm</li>
+                        <li>Phiếu mua hàng phụ kiện trị giá 2,500,000đ</li>
+                        <li>Phiếu mua hàng iPad / Apple Watch trị giá 1,000,000đ</li>
+                        <li>Phiếu mua hàng AirPods trị giá 500,000đ</li>
+                        <li>Thu cũ đổi mới: giảm thêm đến 2,000,000đ</li>
+                    </ul>
+                </div>
+
+                <div class="detail-service">
+                    <p>✓ Xem DucStore còn hàng</p>
+                    <p>✓ Miễn phí giao hàng toàn quốc</p>
+                    <p>✓ Bảo hành chính hãng 12 tháng</p>
+                </div>
+
+                <form action="/Cart/AddToCart" method="post">
+                    <input type="hidden" name="productCode" value="@Model.MaSanPham" />
+                    <input type="hidden" name="quantity" value="1" />
+
+                    <input type="hidden" id="selectedDungLuong" name="dungLuong" value="128GB" />
+                    <input type="hidden" id="selectedGia" name="giaDaChon" value="@Model.Gia" />
+
+                    <button class="detail-buy-btn" type="submit">Mua ngay</button>
+                </form>
+
+                <p class="detail-desc">@Model.MoTa</p>
+            </div>
+        </div>
+
+        @if (related.Count > 0)
+        {
+            <h2 class="related-title">Sản phẩm tương tự</h2>
+            <div class="related-grid">
+                @foreach (var prod in related)
+                {
+                    <a href="/Home/Detail/@prod.MaSanPham" class="related-card">
+                        <img src="/images/@prod.HinhAnh" alt="@prod.TenSanPham" />
+                        <h3>@prod.TenSanPham</h3>
+                        <p>@String.Format("{0:N0}đ", prod.Gia)</p>
+                    </a>
+                }
+            </div>
+        }
+
+    </div>
+</section>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const priceEl = document.getElementById("detailPrice");
+        const selectedDungLuong = document.getElementById("selectedDungLuong");
+        const selectedGia = document.getElementById("selectedGia");
+        const buttons = document.querySelectorAll(".capacity-buttons button");
+
+        if (!priceEl || buttons.length === 0) return;
+
+        const basePrice = Number(priceEl.dataset.basePrice);
+
+        buttons.forEach(function (btn) {
+
+            btn.addEventListener("click", function () {
+
+                buttons.forEach(b => b.classList.remove("active"));
+                this.classList.add("active");
+
+                const plus = Number(this.dataset.plus || 0);
+                const newPrice = basePrice + plus;
+
+                priceEl.innerHTML = newPrice.toLocaleString('vi-VN') + "đ";
+
+                if (selectedDungLuong) {
+                    selectedDungLuong.value = this.innerText.trim();
+                }
+
+                if (selectedGia) {
+                    selectedGia.value = newPrice;
+                }
+            });
+        });
+    });
+</script>

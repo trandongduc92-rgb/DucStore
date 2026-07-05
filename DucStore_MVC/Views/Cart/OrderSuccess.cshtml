@@ -1,0 +1,135 @@
+﻿@model DucStore_MVC.Models.DonHang
+
+@{
+    ViewData["Title"] = "Đặt hàng thành công";
+}
+
+<div class="max-w-3xl mx-auto px-4 py-10">
+
+    <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 text-center">
+
+        <div class="w-16 h-16 mx-auto rounded-full bg-green-100 flex items-center justify-center mb-4">
+            <i data-lucide="check" class="w-8 h-8 text-green-600"></i>
+        </div>
+
+        <h1 class="text-3xl font-black text-gray-900 mb-2">
+            Tiến hành thanh toán
+        </h1>
+
+        <p class="text-gray-500 mb-6">
+            Vui lòng chuyển khoản theo mã QR bên dưới để Admin xác nhận đơn hàng.
+        </p>
+
+        <div class="bg-gray-50 rounded-2xl p-5 mb-6 text-left">
+            <p class="mb-2">
+                <strong>Mã đơn:</strong>
+                <span class="text-blue-600 font-bold">@Model.MaDonHang</span>
+            </p>
+
+            <p class="mb-2">
+                <strong>Khách hàng:</strong>
+                @Model.TenKhachHang
+            </p>
+
+            <p class="mb-2">
+                <strong>Số tiền:</strong>
+                <span class="text-red-600 font-bold">
+                    @String.Format("{0:N0} đ", Model.TongTien)
+                </span>
+            </p>
+
+            <p>
+                <strong>Trạng thái:</strong>
+                <span class="text-orange-600 font-bold">@Model.TrangThai</span>
+            </p>
+        </div>
+
+        <div class="border rounded-2xl p-5 mb-6">
+            <h2 class="font-bold text-lg mb-3">
+                Quét QR để thanh toán
+            </h2>
+
+            <img src="/images/payment/qr-ducstore.jpg"
+                 alt="QR thanh toán DucStore"
+                 class="w-72 mx-auto rounded-xl border" />
+
+            <p class="mt-4 text-sm text-gray-500">
+                Nội dung chuyển khoản:
+            </p>
+
+            <div class="mt-2 bg-blue-50 text-blue-700 font-black rounded-xl py-3">
+                @Model.MaDonHang
+            </div>
+        </div>
+
+        <div class="mb-6">
+            <p class="text-gray-500 text-sm mb-2">
+                Thời gian giữ đơn còn lại:
+            </p>
+
+            <div id="countdown" class="text-3xl font-black text-red-600">
+                15:00
+            </div>
+        </div>
+
+        @if (Model.TrangThai == "Chờ duyệt")
+        {
+            <form asp-controller="Cart" asp-action="ConfirmTransfer" method="post">
+                <input type="hidden" name="orderCode" value="@Model.MaDonHang" />
+
+                <button type="submit"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl">
+                    Tôi đã chuyển khoản
+                </button>
+            </form>
+        }
+        else if (Model.TrangThai == "Chờ xác nhận thanh toán")
+        {
+            <div class="bg-yellow-50 text-yellow-700 rounded-xl p-4 font-bold">
+                Bạn đã báo chuyển khoản. Admin đang kiểm tra thanh toán.
+            </div>
+        }
+        else if (Model.TrangThai == "Đã duyệt")
+        {
+            <div class="bg-green-50 text-green-700 rounded-xl p-4 font-bold">
+                Thanh toán đã được xác nhận. Đơn hàng đang được chuẩn bị giao.
+            </div>
+        }
+        else if (Model.TrangThai == "Đã giao")
+        {
+            <div class="bg-green-50 text-green-700 rounded-xl p-4 font-bold">
+                Đơn hàng đã giao thành công.
+            </div>
+        }
+        else if (Model.TrangThai == "Đã hủy")
+        {
+            <div class="bg-red-50 text-red-700 rounded-xl p-4 font-bold">
+                Đơn hàng đã bị hủy.
+            </div>
+        }
+
+        <a href="/" class="inline-block mt-6 text-blue-600 font-bold">
+            Quay về cửa hàng
+        </a>
+
+    </div>
+</div>
+
+<script>
+    let time = 15 * 60;
+
+    const countdown = document.getElementById("countdown");
+
+    setInterval(function () {
+        let minutes = Math.floor(time / 60);
+        let seconds = time % 60;
+
+        countdown.innerText =
+            String(minutes).padStart(2, "0") + ":" +
+            String(seconds).padStart(2, "0");
+
+        if (time > 0) {
+            time--;
+        }
+    }, 1000);
+</script>

@@ -1,0 +1,983 @@
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    var cartJson = HttpContextAccessor.HttpContext?.Session.GetString("Cart");
+    var cartItems = string.IsNullOrEmpty(cartJson) ? new List<CartItem>() : System.Text.Json.JsonSerializer.Deserialize<List<CartItem>>(cartJson);
+    var cartCount = cartItems?.Sum(i => i.SoLuong) ?? 0;
+    var cartTotal = cartItems?.Sum(i => i.ThanhTien) ?? 0;
+    
+    var customerJson = HttpContextAccessor.HttpContext?.Session.GetString("Customer");
+    var currentUser = string.IsNullOrEmpty(customerJson) ? null : System.Text.Json.JsonSerializer.Deserialize<KhachHang>(customerJson);
+    
+    var adminJson = HttpContextAccessor.HttpContext?.Session.GetString("Admin");
+    var currentAdmin = string.IsNullOrEmpty(adminJson) ? null : System.Text.Json.JsonSerializer.Deserialize<TaiKhoanAdmin>(adminJson);
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DucStore - Apple Authorized Store</title>
+    <!-- Tailwind CSS Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        #store-products {
+            scroll-margin-top: 110px;
+        }
+        .detail-dark-page {
+        background: #3b3b3b;
+        min-height: 100vh;
+        color: #fff;
+        padding: 35px 0 70px;
+        }
+
+        .detail-container {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 0 18px;
+        }
+
+        .detail-breadcrumb {
+        font-size: 13px;
+        color: #d6d6d6;
+        margin-bottom: 25px;
+        }
+
+        .detail-breadcrumb a {
+        color: #d6d6d6;
+        text-decoration: none;
+        }
+
+        .detail-main {
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        gap: 35px;
+        }
+
+        .detail-image-box {
+        background: #444;
+        border-radius: 26px;
+        min-height: 520px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 35px;
+        }
+
+        .detail-image-box img {
+        max-width: 100%;
+        max-height: 470px;
+        object-fit: contain;
+        filter: drop-shadow(0 20px 35px rgba(0,0,0,.35));
+        }
+
+        .detail-thumbs {
+        display: flex;
+        gap: 14px;
+        margin-top: 20px;
+        }
+
+        .detail-thumbs div {
+        width: 78px;
+        height: 78px;
+        background: #fff;
+        border-radius: 10px;
+        padding: 7px;
+        border: 2px solid transparent;
+        }
+
+        .detail-thumbs .active {
+        border-color: #1683ff;
+        }
+
+        .detail-thumbs img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        }
+
+        .detail-logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 18px;
+        }
+
+        .detail-logo-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 14px;
+        background: #0b69ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 900;
+        }
+
+        .detail-logo strong {
+        display: block;
+        font-size: 20px;
+        }
+
+        .detail-logo span {
+        font-size: 10px;
+        letter-spacing: 3px;
+        color: #9cc7ff;
+        }
+
+        .detail-right h1 {
+        font-size: 32px;
+        line-height: 1.2;
+        margin: 0 0 18px;
+        }
+
+        .detail-location {
+        font-weight: 600;
+        margin-bottom: 15px;
+        }
+
+        .detail-price-row {
+        display: flex;
+        align-items: end;
+        gap: 12px;
+        margin-bottom: 12px;
+        }
+
+        .detail-price-row strong {
+        font-size: 30px;
+        font-weight: 900;
+        }
+
+        .detail-price-row del {
+        color: #d0d0d0;
+        }
+
+        .detail-point {
+        display: inline-block;
+        background: #fff5c7;
+        color: #111;
+        border-radius: 20px;
+        padding: 8px 14px;
+        font-weight: 700;
+        font-size: 13px;
+        margin-bottom: 24px;
+        }
+
+        .detail-option {
+        margin-bottom: 22px;
+        }
+
+        .detail-option h4 {
+        margin: 0 0 10px;
+        }
+
+        .detail-buttons {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        }
+
+        .detail-buttons button {
+        background: #2f3033;
+        color: #fff;
+        border: 1px solid #2f3033;
+        padding: 12px 18px;
+        border-radius: 8px;
+        font-weight: 700;
+        }
+
+        .detail-buttons .active {
+        border-color: #1683ff;
+        }
+
+        .detail-colors {
+        display: flex;
+        gap: 15px;
+        }
+
+        .detail-colors span {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        display: block;
+        border: 2px solid transparent;
+        }
+
+        .detail-colors .active {
+        border-color: #1683ff;
+        }
+
+        .color-orange {
+        background: #ff8126;
+        }
+
+        .color-white {
+        background: #fff;
+        }
+
+        .color-dark {
+        background: #242b44;
+        }
+
+        .detail-promo {
+        background: #2f3033;
+        border-radius: 16px;
+        padding: 18px;
+        margin-bottom: 20px;
+        }
+
+        .detail-promo h3 {
+        margin: 0 0 5px;
+        }
+
+        .detail-promo p {
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 12px;
+        }
+
+        .detail-promo li {
+        margin-bottom: 8px;
+        font-size: 14px;
+        }
+
+        .detail-service {
+        font-size: 14px;
+        color: #f1f1f1;
+        margin-bottom: 20px;
+        }
+
+        .detail-buy-btn {
+        width: 100%;
+        border: none;
+        background: #087fff;
+        color: #fff;
+        padding: 16px;
+        border-radius: 12px;
+        font-size: 20px;
+        font-weight: 900;
+        cursor: pointer;
+        }
+
+        .detail-buy-btn:hover {
+        background: #006ee0;
+        }
+
+        .detail-desc {
+        color: #ddd;
+        line-height: 1.6;
+        margin-top: 18px;
+        }
+
+        .related-title {
+        margin-top: 55px;
+        margin-bottom: 20px;
+        font-size: 24px;
+        }
+
+        .related-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+        }
+
+        .related-card {
+        background: #fff;
+        color: #111;
+        border-radius: 18px;
+        padding: 18px;
+        text-decoration: none;
+        }
+
+        .related-card img {
+        width: 100%;
+        height: 180px;
+        object-fit: contain;
+        background: #f5f5f5;
+        border-radius: 14px;
+        padding: 12px;
+        }
+
+        .related-card h3 {
+        font-size: 14px;
+        margin: 12px 0 8px;
+        }
+
+        .related-card p {
+        color: #006ee0;
+        font-weight: 900;
+        }
+        .detail-spec-box {
+        margin-top: 24px;
+        background: #fff;
+        color: #111;
+        border-radius: 18px;
+        padding: 22px;
+        }
+
+        .detail-spec-box h2 {
+        font-size: 22px;
+        font-weight: 900;
+        margin: 0 0 16px;
+        }
+
+        .spec-row {
+        display: grid;
+        grid-template-columns: 150px 1fr;
+        gap: 12px;
+        padding: 13px 0;
+        border-bottom: 1px solid #e5e7eb;
+        font-size: 14px;
+        }
+
+        .spec-row:last-child {
+        border-bottom: none;
+        }
+
+        .spec-row span {
+        color: #666;
+        font-weight: 600;
+        }
+
+        .spec-row strong {
+        color: #111;
+        font-weight: 800;
+        line-height: 1.5;
+        }
+        @@media (max-width: 900px) {
+        .detail-main {
+        grid-template-columns: 1fr;
+        }
+
+        .related-grid {
+        grid-template-columns: repeat(2, 1fr);
+        }
+        }
+    </style>
+</head>
+<body class="bg-[#F5F5F7] font-sans selection:bg-blue-500/30 flex flex-col min-h-screen">
+    <!-- Action Notifications -->
+    @{
+        var successMessage = TempData["SuccessMessage"] as string;
+    }
+
+    @if (!string.IsNullOrEmpty(successMessage))
+    {
+        if (successMessage.Contains("Đặt hàng thành công"))
+        {
+            <div id="checkout-success-modal" class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 px-4">
+                <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl p-7 text-center animate-[fadeIn_.25s_ease]">
+                    <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100 text-green-600">
+                        <i data-lucide="check-circle-2" class="w-9 h-9"></i>
+                    </div>
+
+                    <h2 class="text-2xl font-extrabold text-gray-900 mb-3">
+                        Đặt hàng thành công!
+                    </h2>
+
+                    <p class="text-sm text-gray-600 leading-6 mb-6">
+                        @successMessage
+                    </p>
+
+                    <div class="flex gap-3">
+                        <button type="button"
+                                onclick="document.getElementById('checkout-success-modal').remove()"
+                                class="flex-1 py-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold">
+                            Đóng
+                        </button>
+
+                        <a href="/"
+                           class="flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold">
+                            Tiếp tục mua
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div id="toast-success" class="fixed top-4 right-4 z-50 flex items-center w-full max-w-xs p-4 text-gray-800 bg-white rounded-xl shadow-xl transition-all duration-300" role="alert">
+                <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg">
+                    <i data-lucide="check-circle" class="w-5 h-5"></i>
+                </div>
+                <div class="ms-3 text-sm font-medium">@successMessage</div>
+                <button type="button" onclick="document.getElementById('toast-success').remove()" class="ms-auto bg-white text-gray-400 hover:text-gray-900 rounded-lg p-1.5 hover:bg-gray-100">
+                    ✕
+                </button>
+            </div>
+        }
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div id="toast-error" class="fixed top-4 right-4 z-50 flex items-center w-full max-w-xs p-4 text-gray-800 bg-white rounded-xl shadow-xl transition-all duration-300" role="alert">
+            <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-red-500 bg-red-100 rounded-lg">
+                <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 11.793a1 1 0 1 1-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 0 1-1.414-1.414L8.586 10 6.293 7.707a1 1 0 0 1 1.414-1.414L10 8.586l2.293-2.293a1 1 0 0 1 1.414 1.414L11.414 10l2.293 2.293Z"/>
+                </svg>
+            </div>
+            <div class="ms-3 text-sm font-medium">@TempData["ErrorMessage"]</div>
+            <button type="button" onclick="document.getElementById('toast-error').remove()" class="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8">
+                <span class="sr-only">Đóng</span>
+                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                </svg>
+            </button>
+        </div>
+    }
+
+    <!-- Premium Header Navigation matching Image 2 exactly -->
+    <header class="bg-[#0A2E50] border-b border-white/5 shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Left: Brand Logo Option 3 - Trusted Shield -->
+            <a href="/" class="flex items-center space-x-3 shrink-0 group">
+                <div class="w-12 h-12 rounded-2xl bg-blue-600/10 border border-blue-500/40 flex items-center justify-center shadow-lg shadow-blue-900/20 group-hover:scale-105 transition">
+                    <svg class="w-7 h-7 text-blue-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3l7 3v5c0 4.5-2.8 8.6-7 10-4.2-1.4-7-5.5-7-10V6l7-3z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4" />
+                    </svg>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-xl font-bold tracking-tight text-white leading-none">DucStore</span>
+                    <span class="text-[9px] text-blue-300 tracking-[0.15em] font-semibold uppercase mt-1">PREMIUM HUB</span>
+                </div>
+            </a>
+
+            <!-- Center: Floating Pill Navigation Menu -->
+            <div class="hidden lg:flex bg-white shadow-xl rounded-full p-1.5 items-center space-x-0.5 border border-gray-100">
+                <a href="/" class="px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 @(string.IsNullOrEmpty((string)ViewBag.SelectedCategory) ? "bg-[#EBF5FF] text-[#1E3A8A] shadow-sm" : "text-gray-600 hover:bg-gray-100 hover:text-gray-900")">
+                    Tất cả
+                </a>
+                
+                <a href="/?category=iphone#store-products" class="px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 @((string)ViewBag.SelectedCategory == "iphone" ? "bg-[#EBF5FF] text-[#1E3A8A] shadow-sm" : "text-gray-600 hover:bg-gray-100 hover:text-gray-900")">
+                    iPhone
+                </a>
+                
+                <a href="/?category=ipad#store-products" class="px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 @((string)ViewBag.SelectedCategory == "ipad" ? "bg-[#EBF5FF] text-[#1E3A8A] shadow-sm" : "text-gray-600 hover:bg-gray-100 hover:text-gray-900")">
+                    iPad
+                </a>
+
+                <div class="h-4 w-[1px] bg-gray-200 mx-2"></div>
+
+                <button onclick="toggleCartModal(true)" class="flex items-center space-x-2 px-5 py-2.5 rounded-full text-sm font-semibold text-gray-700 hover:bg-gray-100 transition-all">
+                    <i data-lucide="shopping-cart" class="w-4 h-4 text-gray-500"></i>
+                    <span>Giỏ hàng</span>
+                    <span class="text-xs font-bold text-blue-600">(@cartCount)</span>
+                </button>
+
+                <div class="h-4 w-[1px] bg-gray-200 mx-2"></div>
+
+                <button onclick="@(currentUser != null ? "window.location.href='/Auth/Logout'" : "toggleAuthModal(true)")"
+                        class="flex items-center space-x-2 px-5 py-2.5 rounded-full text-sm font-semibold text-gray-700 hover:bg-gray-100 transition-colors">
+                    <i data-lucide="user" class="w-4 h-4 text-gray-400"></i>
+                    <span class="truncate max-w-[100px]">
+                        @(currentUser != null ? currentUser.TenKhachHang.Split(' ').Last() : "Tài khoản")
+                    </span>
+                </button>
+            </div>
+
+            <!-- Right: Search Bar -->
+            <div class="relative w-full max-w-xs shrink-0 pl-4 md:pl-0">
+                <form action="/" method="get" class="w-full relative">
+                    <input type="text" name="search" value="@ViewBag.SearchQuery" placeholder="Tìm kiếm sản phẩm..." 
+                           class="w-full bg-white/10 hover:bg-white/15 text-white placeholder-white/50 text-sm border border-white/20 pl-10 pr-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white/20 transition-all">
+                    <div class="absolute left-3.5 top-3.5 text-white/50">
+                        <i data-lucide="search" class="w-4 h-4"></i>
+                    </div>
+                    @if (!string.IsNullOrEmpty((string)ViewBag.SelectedCategory))
+                    {
+                        <input type="hidden" name="category" value="@ViewBag.SelectedCategory" />
+                    }
+                </form>
+            </div>
+        </div>
+        
+        <!-- Mobile Navigation pill centered at bottom for smaller viewports -->
+        <div class="lg:hidden bg-[#07213A] border-t border-white/5 px-4 py-2 flex justify-center">
+            <div class="bg-white/95 backdrop-blur shadow-md rounded-full p-1 flex items-center space-x-1 border border-gray-200">
+                <a href="/" class="px-4 py-1.5 rounded-full text-xs font-semibold @(string.IsNullOrEmpty((string)ViewBag.SelectedCategory) ? "bg-[#EBF5FF] text-[#1E3A8A]" : "text-gray-600")">Tất cả</a>
+                <a href="/?category=iphone#store-products" class="px-4 py-1.5 rounded-full text-xs font-semibold @((string)ViewBag.SelectedCategory == "iphone" ? "bg-[#EBF5FF] text-[#1E3A8A]" : "text-gray-600")">iPhone</a>
+                <a href="/?category=ipad#store-products" class="px-4 py-1.5 rounded-full text-xs font-semibold @((string)ViewBag.SelectedCategory == "ipad" ? "bg-[#EBF5FF] text-[#1E3A8A]" : "text-gray-600")">iPad</a>
+                <button onclick="toggleCartModal(true)" class="px-3 py-1.5 rounded-full text-xs font-semibold text-gray-700 flex items-center space-x-1">
+                    <i data-lucide="shopping-cart" class="w-3.5 h-3.5"></i>
+                    <span>Giỏ hàng (@cartCount)</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow">
+        @RenderBody()
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div class="col-span-1 md:col-span-2">
+                <span class="text-xl font-bold tracking-tight">DUCSTORE</span>
+                <p class="text-gray-400 text-sm mt-3 max-w-sm">Hệ thống phân phối ủy quyền chính thức các sản phẩm Apple của đại lý DucStore tại Việt Nam. Uy tín, chất lượng và dịch vụ bảo hành chuẩn mực 5 sao.</p>
+            </div>
+            <div>
+                <h4 class="font-semibold text-sm tracking-wider uppercase mb-3">Hỗ Trợ Khách Hàng</h4>
+                <ul class="space-y-2 text-sm text-gray-400">
+                    <li><a href="#" class="hover:text-white transition">Chính sách bảo hành</a></li>
+                    <li><a href="#" class="hover:text-white transition">Chính sách vận chuyển</a></li>
+                    <li><a href="#" class="hover:text-white transition">Điều khoản mua sắm</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-semibold text-sm tracking-wider uppercase mb-3">Tài Khoản Admin</h4>
+                <ul class="space-y-2 text-sm text-gray-400">
+                    <li>
+                        @if (currentAdmin != null)
+                        {
+                            <a href="/Admin/Index" class="inline-block hover:scale-110 transition duration-300" title="Vào trang quản trị">
+                                <img src="/images/apple-admin.png"
+                                     alt="Admin"
+                                     class="w-6 h-6 opacity-70 hover:opacity-100 object-contain" />
+                            </a>
+                        }
+                        else
+                        {
+                            <button onclick="toggleAdminModal(true)"
+                                    class="hover:scale-110 transition duration-300"
+                                    title="Đăng nhập Admin">
+                                <img src="/images/apple-admin.png"
+                                     alt="Admin"
+                                     class="w-6 h-6 opacity-70 hover:opacity-100 object-contain" />
+                            </button>
+                        }
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-gray-800 text-center text-xs text-gray-500 pt-6 mt-8">
+            &copy; 2026 DucStore. All rights reserved. ASP.NET Core MVC Edition.
+        </div>
+    </footer>
+
+    <!-- ================= MODAL AUTH (LOGIN / REGISTER) ================= -->
+    <div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleAuthModal(false)"></div>
+        <div class="relative bg-white w-full max-w-md p-8 rounded-2xl shadow-2xl mx-4 transition-all duration-300">
+            <button onclick="toggleAuthModal(false)" class="absolute top-4 right-4 text-gray-400 hover:text-gray-900">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+
+            <!-- Login Segment -->
+            <div id="login-segment">
+                <h3 class="text-xl font-bold text-gray-900 mb-2">Đăng Nhập Khách Hàng</h3>
+                <p class="text-sm text-gray-500 mb-6 font-light">Vui lòng nhập thông tin đăng nhập của bạn để tiếp tục mua sắm.</p>
+                <form asp-controller="Auth" asp-action="Login" method="post" class="space-y-4" autocomplete="off">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Địa chỉ Email</label>
+                        <input type="email" name="email" autocomplete="new-email" required placeholder="example@gmail.com" class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Mật khẩu</label>
+                        <input type="password" name="password" autocomplete="new-password" required placeholder="******" class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                    </div>
+                    <button type="submit" class="w-full py-3 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-lg hover:shadow-blue-500/20 active:scale-[0.98] transition">Đăng Nhập</button>
+                    <div class="text-center text-xs text-gray-500 mt-4">
+                        Chưa có tài khoản? <button type="button" onclick="switchToRegister(true)" class="text-blue-600 font-semibold hover:underline">Đăng ký ngay</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Register Segment -->
+            <div id="register-segment" class="hidden">
+                <h3 class="text-xl font-bold text-gray-900 mb-2">Đăng Ký Khách Hàng</h3>
+                <p class="text-sm text-gray-500 mb-6 font-light">Tạo tài khoản mới để nhận nhiều ưu đãi.</p>
+                <form asp-controller="Auth" asp-action="Register" method="post" class="space-y-4 max-h-[420px] overflow-y-auto pr-2">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Họ và Tên</label>
+                        <input type="text" name="name" required placeholder="Nguyễn Văn A" class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Địa chỉ Email</label>
+                        <input type="email" name="email" required placeholder="example@gmail.com" class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Số điện thoại</label>
+                        <input type="tel" name="phone" required placeholder="0987654321" class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Mật khẩu</label>
+                        <input type="password" name="password" required placeholder="******" class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Địa chỉ nhận hàng</label>
+                        <input type="text" name="address" required placeholder="Số nhà, Tên đường, Quận, Thành phố" class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                    </div>
+                    <button type="submit" class="w-full py-3 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-lg hover:shadow-blue-500/20 active:scale-[0.98] transition">Đăng Ký</button>
+                    <div class="text-center text-xs text-gray-500 mt-4">
+                        Đã có tài khoản? <button type="button" onclick="switchToRegister(false)" class="text-blue-600 font-semibold hover:underline">Đăng nhập</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MODAL ADMIN LOGIN ================= -->
+    <div id="admin-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleAdminModal(false)"></div>
+        <div class="relative bg-white w-full max-w-sm p-8 rounded-2xl shadow-2xl mx-4">
+            <button onclick="toggleAdminModal(false)" class="absolute top-4 right-4 text-gray-400 hover:text-gray-900">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <h3 class="text-xl font-bold text-red-600 mb-2 flex items-center space-x-2">
+                <i data-lucide="shield-alert" class="w-6 h-6"></i>
+                <span>Trang Quản Trị</span>
+            </h3>
+            <p class="text-xs text-gray-500 mb-6">Chỉ tài khoản Admin mới được phép truy cập trang quản trị DucStore.</p>
+            <form asp-controller="Auth" asp-action="AdminLogin" method="post" class="space-y-4" autocomplete="off">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Tên đăng nhập</label>
+                    <input type="text" name="adminUsername" autocomplete="off" required placeholder="admin" class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Mật khẩu</label>
+                    <input type="password" name="adminPassword" autocomplete="new-password" required placeholder="******" class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500">
+                </div>
+                <button type="submit" class="w-full py-3 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-xl shadow-lg hover:shadow-red-500/20 transition">Đăng Nhập Admin</button>
+                
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= SHOPPING CART CENTERED MODAL ================= -->
+    <div id="cart-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+        <!-- Close Overlay with backdrop blur -->
+        <div id="cart-overlay" class="absolute inset-0 bg-black/60 backdrop-blur-md opacity-0 transition-opacity duration-300" onclick="toggleCartModal(false)"></div>
+        
+        <!-- Modal Container -->
+        <div id="cart-content" class="relative bg-white w-full max-w-4xl rounded-[2rem] shadow-2xl overflow-hidden mx-4 flex flex-col max-h-[85vh] transform scale-95 opacity-0 transition-all duration-300 z-10">
+            <!-- Header -->
+            <div class="p-6 md:p-8 border-b border-gray-100 flex items-center justify-between bg-white text-gray-900">
+                <div class="flex items-center space-x-3.5">
+                    <div class="bg-blue-50 p-2.5 rounded-2xl text-blue-600">
+                        <i data-lucide="shopping-cart" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-extrabold tracking-tight text-gray-900">Giỏ Hàng Của Bạn</h3>
+                        <p class="text-xs text-gray-500 font-medium">Bạn có <span class="text-blue-600 font-bold">@cartCount</span> sản phẩm trong giỏ hàng</p>
+                    </div>
+                </div>
+                <button onclick="toggleCartModal(false)" class="p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-50 rounded-xl transition-colors">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <!-- Two-Column Grid Content -->
+            <div class="flex-grow overflow-y-auto p-6 md:p-8">
+                @if (cartItems == null || cartItems.Count == 0)
+                {
+                    <div class="text-center py-20">
+                        <div class="inline-flex p-5 rounded-full bg-blue-50 text-blue-400 mb-4">
+                            <i data-lucide="shopping-bag" class="w-12 h-12"></i>
+                        </div>
+                        <h4 class="text-lg font-bold text-gray-900">Giỏ hàng của bạn đang trống</h4>
+                        <p class="text-gray-500 text-sm mt-1 max-w-sm mx-auto">Hãy khám phá các sản phẩm iPhone & iPad cao cấp tại DucStore để bắt đầu mua sắm.</p>
+                        <button onclick="toggleCartModal(false)" class="inline-block mt-6 px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm rounded-full transition shadow-lg shadow-blue-500/10">Tiếp tục mua hàng</button>
+                    </div>
+                }
+                else
+                {
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+                        <!-- Left Column: PRODUCT LIST -->
+                        <div class="space-y-6">
+                            <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center space-x-2">
+                                <span>DANH SÁCH SẢN PHẨM (@cartItems.Count)</span>
+                            </h4>
+                            
+                            <div class="space-y-4 max-h-[350px] overflow-y-auto pr-2">
+                                @foreach (var item in cartItems)
+                                {
+                                    <div class="flex items-center space-x-4 p-4 bg-gray-50/50 hover:bg-gray-50 border border-gray-100 rounded-2xl relative transition-all group">
+                                        <div class="w-16 h-16 bg-white border border-gray-200/60 rounded-xl flex items-center justify-center p-2 shrink-0">
+                                            <img src="/images/@item.SanPham.HinhAnh" alt="@item.SanPham.TenSanPham" class="w-full h-full object-contain transition-transform group-hover:scale-110 duration-300">
+                                        </div>
+                                        <div class="flex-1 min-w-0 pr-6">
+                                            <h5 class="text-sm font-bold text-gray-900 truncate">@item.SanPham.TenSanPham</h5>
+                                            <p class="text-xs text-gray-500 font-semibold mt-1">Dung lượng: @item.DungLuong</p>
+                                            <p class="text-sm text-blue-600 font-extrabold mt-1">@String.Format("{0:N0} đ", item.GiaDaChon)</p>
+                                            
+                                            <!-- Quantity Pill with Input -->
+                                            <div class="flex items-center space-x-2 mt-2.5">
+                                                <form asp-controller="Cart" asp-action="UpdateQuantity" method="post" class="inline-flex items-center bg-white border border-gray-200 rounded-full h-8 overflow-hidden p-0.5">
+                                                    <input type="hidden" name="productCode" value="@item.SanPham.MaSanPham" />
+                                                    <input type="hidden" name="dungLuong" value="@item.DungLuong" />
+                                                    <button type="submit" name="quantity" value="@(item.SoLuong - 1)" class="w-7 h-7 flex items-center justify-center text-gray-500 hover:bg-gray-100 rounded-full transition-colors text-sm font-semibold">-</button>
+                                                    <span class="px-3 text-xs font-bold text-gray-900 w-8 text-center">@item.SoLuong</span>
+                                                    <button type="submit" name="quantity" value="@(item.SoLuong + 1)" class="w-7 h-7 flex items-center justify-center text-gray-500 hover:bg-gray-100 rounded-full transition-colors text-sm font-semibold">+</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        <form asp-controller="Cart" asp-action="RemoveFromCart" method="post" class="absolute top-4 right-4">
+                                            <input type="hidden" name="productCode" value="@item.SanPham.MaSanPham" />
+                                            <input type="hidden" name="dungLuong" value="@item.DungLuong" />
+                                            <button type="submit" class="text-gray-400 hover:text-red-500 p-1.5 hover:bg-red-50 rounded-lg transition-all" title="Xóa">
+                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="border-t border-gray-100 pt-5 space-y-3.5">
+                                <div class="flex justify-between items-center text-sm text-gray-500">
+                                    <span>Cơ sở phân phối</span>
+                                    <span class="font-semibold text-gray-800">DucStore Premium Hub</span>
+                                </div>
+                                <div class="flex justify-between items-center text-sm text-gray-500">
+                                    <span>Thuế VAT (8%)</span>
+                                    <span class="font-semibold text-gray-800">Đã bao gồm</span>
+                                </div>
+                                <div class="flex justify-between items-center border-t border-dashed border-gray-200 pt-3.5">
+                                    <span class="text-sm font-bold text-gray-900">Tổng cộng thanh toán:</span>
+                                    <span class="text-xl font-black text-blue-600">@String.Format("{0:N0} đ", cartTotal)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: CHECKOUT INFORMATION -->
+                        <div class="bg-gray-50/50 p-6 md:p-8 rounded-[2rem] border border-gray-200/50 flex flex-col justify-between space-y-6">
+                            <div>
+                                <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center space-x-2 mb-4">
+                                    <i data-lucide="credit-card" class="w-4 h-4 text-gray-400"></i>
+                                    <span>Thanh toán hoá đơn</span>
+                                </h4>
+
+                                <form id="checkout-form" asp-controller="Cart" asp-action="Checkout" method="post" class="space-y-4">
+                                    <!-- Payment Method Selector -->
+                                    <div class="space-y-2 pb-4 border-b border-gray-200/60">
+                                        <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1.5">Hình thức nhận hàng & thanh toán <span class="text-red-500">*</span></label>
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <label class="cursor-pointer">
+                                                <input type="radio" name="paymentMethod" value="bank_transfer" class="hidden payment-method-radio" checked onchange="updatePaymentMethodUI()">
+                                                <div class="payment-method-card border-2 border-blue-500 bg-blue-50 rounded-xl p-3 text-center transition-all">
+                                                    <i data-lucide="landmark" class="w-5 h-5 mx-auto text-blue-600 mb-1"></i>
+                                                    <span class="block text-[11px] font-bold text-blue-700">Chuyển khoản</span>
+                                                </div>
+                                            </label>
+                                            <label class="cursor-pointer">
+                                                <input type="radio" name="paymentMethod" value="store_pickup" class="hidden payment-method-radio" onchange="updatePaymentMethodUI()">
+                                                <div class="payment-method-card border-2 border-gray-200 bg-white rounded-xl p-3 text-center transition-all">
+                                                    <i data-lucide="store" class="w-5 h-5 mx-auto text-gray-500 mb-1"></i>
+                                                    <span class="block text-[11px] font-bold text-gray-600">Nhận tại cửa hàng</span>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <!-- Bank transfer info box -->
+                                    <div id="bank-transfer-info" class="bg-indigo-50 border border-indigo-200 p-4 rounded-xl text-[11px] text-indigo-800 space-y-1.5">
+                                        <div class="flex items-center space-x-2 font-bold mb-1">
+                                            <i data-lucide="landmark" class="w-4.5 h-4.5 text-indigo-600"></i>
+                                            <span>Thông tin chuyển khoản</span>
+                                        </div>
+                                        <div>• Ngân hàng: <b>BIDV - CN TP.HCM</b></div>
+                                        <div>• Số tài khoản: <b>8818883332</b></div>
+                                        <div>• Chủ tài khoản: <b>TRAN DONG DUC</b></div>
+                                        <div>• Nội dung CK: <b>Nội dung QR Trang Thanh Toán</b></div>
+                                        <p class="pt-1 italic text-indigo-600">Đơn hàng sẽ được giao đến địa chỉ bạn cung cấp sau khi DucStore xác nhận đã nhận thanh toán.</p>
+                                    </div>
+
+                                    <!-- Store pickup info box -->
+                                    <div id="store-pickup-info" class="hidden bg-emerald-50 border border-emerald-200 p-4 rounded-xl text-[11px] text-emerald-800 space-y-1.5">
+                                        <div class="flex items-center space-x-2 font-bold mb-1">
+                                            <i data-lucide="store" class="w-4.5 h-4.5 text-emerald-600"></i>
+                                            <span>Nhận hàng & thanh toán tại cửa hàng</span>
+                                        </div>
+                                        <div>• Địa chỉ: <b>DucStore Premium Hub - 88 Nguyễn văn Tăng, Q.9, TP.HCM</b></div>
+                                        <div>• Giờ mở cửa: <b>08:00 - 21:00</b> (tất cả các ngày trong tuần)</div>
+                                        <p class="pt-1 italic text-emerald-600">Vui lòng mang theo mã đơn hàng khi đến nhận. Thanh toán trực tiếp bằng tiền mặt hoặc thẻ tại cửa hàng, không cần nhập địa chỉ giao hàng.</p>
+                                    </div>
+
+                                    @if (currentUser == null)
+                                    {
+                                        <div class="bg-amber-50 border border-amber-200/60 p-3.5 rounded-xl text-[11px] text-amber-800 flex items-start space-x-2.5">
+                                            <i data-lucide="info" class="w-4.5 h-4.5 text-amber-600 shrink-0 mt-0.5"></i>
+                                            <span>Bạn đang đặt hàng không tài khoản. Vui lòng nhập thông tin giao nhận để tiếp tục.</span>
+                                        </div>
+                                        <div>
+                                            <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1.5">Họ & Tên khách nhận <span class="text-red-500">*</span></label>
+                                            <input type="text" name="name" required placeholder="Nhập họ và tên đầy đủ..." class="w-full bg-white px-4 py-3 text-xs border border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1.5">Số điện thoại liên lạc <span class="text-red-500">*</span></label>
+                                            <input type="tel" name="phone" required placeholder="Nhập số điện thoại nhận hàng..." class="w-full bg-white px-4 py-3 text-xs border border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all">
+                                        </div>
+                                        <div id="address-field-wrapper">
+                                            <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1.5">Địa chỉ giao hàng chi tiết <span class="text-red-500">*</span></label>
+                                            <textarea name="address" required rows="3" placeholder="Số nhà, tên đường, phường/xã, quận/huyện, thành phố..." class="w-full bg-white px-4 py-3 text-xs border border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all resize-none"></textarea>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl text-xs text-blue-800 space-y-1.5">
+                                            <div class="flex items-center space-x-2 font-bold mb-1">
+                                                <i data-lucide="user-check" class="w-4.5 h-4.5 text-blue-600"></i>
+                                                <span>Xác thực tài khoản thành công</span>
+                                            </div>
+                                            <p>Chào mừng <b>@currentUser.TenKhachHang</b>. Hệ thống tự động điền các thông tin hồ sơ của bạn để giao nhận hàng:</p>
+                                            <div class="border-t border-blue-200/50 pt-2 mt-2 space-y-1">
+                                                <div>• Người nhận: <b>@currentUser.TenKhachHang</b></div>
+                                                <div>• Điện thoại: <b>@currentUser.DienThoai</b></div>
+                                                <div>• Địa chỉ: <b>@currentUser.DiaChi</b></div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div id="address-field-wrapper">
+                                            <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1.5">Địa chỉ giao hàng thay thế (Để trống nếu dùng mặc định)</label>
+                                            <textarea name="address" rows="2" placeholder="Nhập địa chỉ giao hàng khác nếu có..." class="w-full bg-white px-4 py-3 text-xs border border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all resize-none"></textarea>
+                                        </div>
+                                    }
+                                </form>
+                            </div>
+
+                            <div class="pt-4 border-t border-gray-200/60">
+                                <button type="submit" form="checkout-form" class="w-full py-4 text-sm font-extrabold text-white bg-blue-600 hover:bg-blue-500 rounded-xl shadow-lg shadow-blue-500/20 flex items-center justify-center space-x-2 transition-all duration-300 transform active:scale-95 cursor-pointer">
+                                    <span>Thanh toán ngay</span>
+                                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Lucide Icons CDN Script -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        lucide.createIcons();
+
+        function toggleAuthModal(show) {
+            const modal = document.getElementById('auth-modal');
+            if (show) {
+                modal.classList.remove('hidden');
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
+
+        function switchToRegister(isRegister) {
+            const loginSeg = document.getElementById('login-segment');
+            const registerSeg = document.getElementById('register-segment');
+            if (isRegister) {
+                loginSeg.classList.add('hidden');
+                registerSeg.classList.remove('hidden');
+            } else {
+                loginSeg.classList.remove('hidden');
+                registerSeg.classList.add('hidden');
+            }
+        }
+
+        function toggleAdminModal(show) {
+            const modal = document.getElementById('admin-modal');
+            if (show) {
+                modal.classList.remove('hidden');
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
+
+        function toggleCartModal(show) {
+            const modal = document.getElementById('cart-modal');
+            const content = document.getElementById('cart-content');
+            const overlay = document.getElementById('cart-overlay');
+            if (show) {
+                modal.classList.remove('hidden');
+                overlay.classList.remove('hidden');
+                setTimeout(() => {
+                    overlay.classList.remove('opacity-0');
+                    overlay.classList.add('opacity-100');
+                    content.classList.remove('scale-95', 'opacity-0');
+                    content.classList.add('scale-100', 'opacity-100');
+                    updatePaymentMethodUI();
+                }, 10);
+            } else {
+                overlay.classList.remove('opacity-100');
+                overlay.classList.add('opacity-0');
+                content.classList.remove('scale-100', 'opacity-100');
+                content.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    overlay.classList.add('hidden');
+                }, 300);
+            }
+        }
+
+        function updatePaymentMethodUI() {
+            const checkedRadio = document.querySelector('input[name="paymentMethod"]:checked');
+            if (!checkedRadio) return;
+            const isPickup = checkedRadio.value === 'store_pickup';
+
+            // Toggle the two info boxes
+            const bankInfo = document.getElementById('bank-transfer-info');
+            const pickupInfo = document.getElementById('store-pickup-info');
+            if (bankInfo) bankInfo.classList.toggle('hidden', isPickup);
+            if (pickupInfo) pickupInfo.classList.toggle('hidden', !isPickup);
+
+            // Toggle address field: hide + remove required when picking up at store
+            const addressWrapper = document.getElementById('address-field-wrapper');
+            if (addressWrapper) {
+                addressWrapper.classList.toggle('hidden', isPickup);
+                const addressInput = addressWrapper.querySelector('textarea[name="address"]');
+                if (addressInput) {
+                    if (isPickup) {
+                        addressInput.removeAttribute('required');
+                    } else if (addressInput.dataset.originallyRequired === 'true') {
+                        addressInput.setAttribute('required', 'required');
+                    }
+                }
+            }
+
+            // Update selected card styling
+            document.querySelectorAll('.payment-method-radio').forEach(radio => {
+                const card = radio.nextElementSibling;
+                if (!card) return;
+                const label = card.querySelector('span');
+                if (radio.checked) {
+                    card.classList.add('border-blue-500', 'bg-blue-50');
+                    card.classList.remove('border-gray-200', 'bg-white');
+                    if (label) { label.classList.add('text-blue-700'); label.classList.remove('text-gray-600'); }
+                } else {
+                    card.classList.remove('border-blue-500', 'bg-blue-50');
+                    card.classList.add('border-gray-200', 'bg-white');
+                    if (label) { label.classList.remove('text-blue-700'); label.classList.add('text-gray-600'); }
+                }
+            });
+        }
+
+        // Remember which address field was originally required (guest checkout) on first load
+        document.addEventListener('DOMContentLoaded', function () {
+            const addressInput = document.querySelector('#address-field-wrapper textarea[name="address"]');
+            if (addressInput && addressInput.hasAttribute('required')) {
+                addressInput.dataset.originallyRequired = 'true';
+            }
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const openCart = (urlParams.get("openCart") || "").toLowerCase();
+
+        if (openCart === "true") {
+        setTimeout(function () {
+        toggleCartModal(true);
+        }, 300);
+        }
+        });
+    </script>
+</body>
+</html>

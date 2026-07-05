@@ -1,0 +1,521 @@
+@{
+    Layout = "_Layout";
+    
+    var totalProducts = ViewBag.TotalProducts;
+    var totalOrders = ViewBag.TotalOrders;
+    var pendingOrders = ViewBag.PendingOrders;
+    var totalCustomers = ViewBag.TotalCustomers;
+    var totalRevenue = ViewBag.TotalRevenue;
+
+    var recentOrders = ViewBag.RecentOrders as List<DucStore_MVC.Models.DonHang> ?? new List<DonHang>();
+    var categories = ViewBag.Categories as List<DucStore_MVC.Models.DanhMuc> ?? new List<DanhMuc>();
+    var products = ViewBag.Products as List<DucStore_MVC.Models.SanPham> ?? new List<SanPham>();
+    var orders = ViewBag.Orders as List<DucStore_MVC.Models.DonHang> ?? new List<DonHang>();
+    var customers = ViewBag.Customers as List<DucStore_MVC.Models.KhachHang> ?? new List<KhachHang>();
+}
+
+<!-- ADMIN MASTER PANEL -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <!-- Admin Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-100 pb-6 mb-8">
+        <div>
+            <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight flex items-center space-x-2">
+                <i data-lucide="shield-check" class="w-7 h-7 text-red-600"></i>
+                <span>Trang Quản Trị Hệ Thống - DucStore</span>
+            </h1>
+            <p class="text-xs text-gray-400 mt-1">Trang quản lý sản phẩm, danh mục hàng hóa và kiểm duyệt hóa đơn của quý khách hàng.</p>
+        </div>
+        <div class="flex items-center">
+            <a href="/" class="text-xs px-4 py-2 font-semibold text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition">
+                ← Về Cửa Hàng
+            </a>
+        </div>
+    </div>
+
+    <!-- STATS WIDGETS GROUP -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+        <!-- Revenue Stat -->
+        <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-6 text-white shadow-lg shadow-blue-500/15">
+            <div class="flex justify-between items-center opacity-85">
+                <span class="text-xs font-bold uppercase tracking-wider">Tổng Doanh Thu</span>
+                <i data-lucide="banknote" class="w-5.5 h-5.5"></i>
+            </div>
+            <p class="text-2xl font-black mt-3">@String.Format("{0:N0} đ", totalRevenue)</p>
+            <p class="text-[10px] mt-1.5 opacity-75">Tính từ đơn "Đã duyệt" / "Đã giao"</p>
+        </div>
+
+        <!-- Orders Stat -->
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm flex items-center justify-between">
+            <div>
+                <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block">Hóa Đơn</span>
+                <p class="text-2xl font-black text-gray-900 mt-2">@pendingOrders</p>
+                <span class="text-[10px] text-orange-500 font-medium">@pendingOrders đơn chờ duyệt</span>
+            </div>
+            <div class="p-3 bg-orange-50 text-orange-500 rounded-xl">
+                <i data-lucide="shopping-cart" class="w-6 h-6"></i>
+            </div>
+        </div>
+
+        <!-- Products Stat -->
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm flex items-center justify-between">
+            <div>
+                <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block">Sản Phẩm</span>
+                <p class="text-2xl font-black text-gray-900 mt-2">@totalProducts</p>
+                <span class="text-[10px] text-gray-400">Có sẵn trong hệ thống</span>
+            </div>
+            <div class="p-3 bg-green-50 text-green-500 rounded-xl">
+                <i data-lucide="package" class="w-6 h-6"></i>
+            </div>
+        </div>
+
+        <!-- Customers Stat -->
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm flex items-center justify-between">
+            <div>
+                <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block">Thành Viên</span>
+                <p class="text-2xl font-black text-gray-900 mt-2">@totalCustomers</p>
+                <span class="text-[10px] text-blue-500">Người dùng đã đăng ký</span>
+            </div>
+            <div class="p-3 bg-blue-50 text-blue-50 rounded-xl text-blue-600">
+                <i data-lucide="users" class="w-6 h-6"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- WORKSPACE TAPPING SWITCHER -->
+    <div class="flex border-b border-gray-200 mb-8 space-x-4">
+        <button onclick="switchTab('tab-products')" id="btn-tab-products" class="px-5 py-3 text-sm font-bold text-red-600 border-b-2 border-red-600 transition-colors focus:outline-none">
+            Quản Lý Sản Phẩm (@totalProducts)
+        </button>
+        <button onclick="switchTab('tab-categories')" id="btn-tab-categories" class="px-5 py-3 text-sm font-bold text-gray-500 border-b-2 border-transparent hover:text-gray-900 transition-colors focus:outline-none">
+            Danh Mục Hàng Hóa (@categories.Count)
+        </button>
+        <button onclick="switchTab('tab-orders')" id="btn-tab-orders" class="px-5 py-3 text-sm font-bold text-gray-500 border-b-2 border-transparent hover:text-gray-900 transition-colors focus:outline-none">
+            Hóa Đơn Chờ Duyệt (@pendingOrders)
+        </button>
+        <button onclick="switchTab('tab-customers')" id="btn-tab-customers"
+                class="px-5 py-3 text-sm font-bold text-gray-500 border-b-2 border-transparent hover:text-gray-900 transition-colors focus:outline-none">
+            Thành Viên (@totalCustomers)
+        </button>
+    </div>
+
+    <!-- ================= CONTROLS VIEW STAGES ================= -->
+
+    <!-- 1. PRODUCT CONTROL WORKSPACE -->
+    <div id="tab-products" class="tab-content space-y-6">
+        <div class="flex justify-between items-center">
+            <h3 class="text-md font-bold text-gray-900">Danh Sách Sản Phẩm</h3>
+            <button onclick="showAddProductModal()" class="px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow transition flex items-center space-x-1.5">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                <span>Thêm sản phẩm mới</span>
+            </button>
+        </div>
+
+        <div class="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-sm text-gray-700">
+                    <thead class="bg-gray-50 text-gray-500 text-xs font-bold uppercase border-b border-gray-100">
+                        <tr>
+                            <th class="px-6 py-4">Hình ảnh</th>
+                            <th class="px-6 py-4">Mã / Tên sản phẩm</th>
+                            <th class="px-6 py-4">Danh mục</th>
+                            <th class="px-6 py-4">Đơn giá</th>
+                            <th class="px-6 py-4 text-right">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-50 uppercase-cells">
+                        @foreach (var prod in products)
+                        {
+                            <tr class="hover:bg-gray-50/50 transition">
+                                <td class="px-6 py-4">
+                                    <img src="/images/@prod.HinhAnh" alt="" class="w-10 h-10 object-contain bg-gray-50 border rounded-lg p-1">
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="font-bold text-gray-900">@prod.TenSanPham</div>
+                                    <div class="text-[10px] text-gray-400 lowercase italic">code: @prod.MaSanPham</div>
+                                </td>
+                                <td class="px-6 py-4 text-xs font-semibold text-gray-500">
+                                    @prod.MaDanhMuc
+                                </td>
+                                <td class="px-6 py-4 font-bold text-blue-600">
+                                    @String.Format("{0:N0} đ", prod.Gia)
+                                </td>
+                                <td class="px-6 py-4 text-right flex justify-end space-x-2">
+                                    <button onclick="fillEditProductModal('@prod.MaSanPham', '@prod.TenSanPham.Replace("'", "\\'")', '@prod.Gia', '@prod.MoTa.Replace("'", "\\'")', '@prod.MaDanhMuc')" class="p-1.5 text-gray-500 hover:text-blue-600 bg-gray-50 hover:bg-blue-100 rounded-lg transition">
+                                        <i data-lucide="edit-3" class="w-4 h-4"></i>
+                                    </button>
+                                    <form asp-controller="Admin" asp-action="DeleteProduct" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');">
+                                        <input type="hidden" name="code" value="@prod.MaSanPham">
+                                        <button type="submit" class="p-1.5 text-gray-500 hover:text-red-600 bg-gray-50 hover:bg-red-100 rounded-lg transition">
+                                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. CATEGORY CONTROL WORKSPACE -->
+    <div id="tab-categories" class="tab-content hidden space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Add category block (left) -->
+            <div class="bg-white border border-gray-100 p-6 rounded-2xl shadow-sm h-fit">
+                <h3 class="text-sm font-bold text-gray-900 mb-4">Thêm Danh Mục Mới</h3>
+                <form asp-controller="Admin" asp-action="AddCategory" method="post" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1.5 uppercase">Mã danh mục</label>
+                        <input type="text" name="code" required placeholder="Ví dụ: macbook" class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:border-red-500 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1.5 uppercase">Tên danh mục</label>
+                        <input type="text" name="name" required placeholder="Ví dụ: MacBook" class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:border-red-500 text-sm">
+                    </div>
+                    <button type="submit" class="w-full py-2.5 text-xs font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl transition">Xác Nhận Thêm</button>
+                </form>
+            </div>
+
+            <!-- List table block (right) -->
+            <div class="lg:col-span-2 bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm h-fit">
+                <table class="w-full text-left border-collapse text-sm">
+                    <thead class="bg-gray-50 text-gray-400 text-xs font-bold uppercase border-b border-gray-100">
+                        <tr>
+                            <th class="px-6 py-4">Mã Danh Mục</th>
+                            <th class="px-6 py-4">Tên Danh Mục</th>
+                            <th class="px-6 py-4 text-right">Lựa chọn</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-50 text-gray-700 font-medium whitespace-nowrap">
+                        @foreach (var cat in categories)
+                        {
+                            <tr class="hover:bg-gray-50/50 transition">
+                                <td class="px-6 py-4 text-slate-900 font-semibold">@cat.MaDanhMuc</td>
+                                <td class="px-6 py-4">@cat.TenDanhMuc</td>
+                                <td class="px-6 py-4 text-right flex justify-end space-x-2">
+                                    <form asp-controller="Admin" asp-action="DeleteCategory" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xóa danh mục này?');">
+                                        <input type="hidden" name="code" value="@cat.MaDanhMuc" />
+                                        <button type="submit" class="p-1.5 text-gray-500 hover:text-red-600 bg-gray-50 hover:bg-red-100 rounded-lg transition">
+                                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. ORDERS CONTROL WORKSPACE -->
+    <div id="tab-orders" class="tab-content hidden space-y-6">
+        <h3 class="text-md font-bold text-gray-900">Danh Sách Hóa Đơn</h3>
+        <div class="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-sm text-gray-700">
+                    <thead class="bg-gray-50 text-gray-400 text-xs font-bold uppercase border-b border-gray-100">
+                        <tr>
+                            <th class="px-6 py-4">Mã Đơn</th>
+                            <th class="px-6 py-4">Khách Hàng</th>
+                            <th class="px-6 py-4">Ngày đặt</th>
+                            <th class="px-6 py-4">Tổng tiền</th>
+                            <th class="px-6 py-4">Hình thức TT</th>
+                            <th class="px-6 py-4">Địa chỉ giao hàng</th>
+                            <th class="px-6 py-4">Trạng thái duyệt</th>
+                            <th class="px-6 py-4">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-50">
+                        @foreach (var ord in orders)
+                        {
+                            <tr class="hover:bg-gray-50/50 transition text-xs font-medium">
+                                <td class="px-6 py-4 font-bold text-slate-900">@ord.MaDonHang</td>
+                                <td class="px-6 py-4">
+                                    <div class="text-slate-900 font-bold">@ord.TenKhachHang</div>
+                                    <div class="text-[10px] text-gray-400">ID: @ord.MaKhachHang</div>
+                                </td>
+                                <td class="px-6 py-4 text-gray-500">
+                                    @ord.NgayDat.ToString("dd/MM/yyyy HH:mm")
+                                </td>
+                                <td class="px-6 py-4 font-bold text-blue-600">
+                                    @String.Format("{0:N0} đ", ord.TongTien)
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold @(ord.HinhThucThanhToan == "Nhận tại cửa hàng" ? "bg-emerald-50 text-emerald-600" : "bg-indigo-50 text-indigo-600")">
+                                        @ord.HinhThucThanhToan
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-gray-500 max-w-xs truncate">
+                                    @ord.DiaChiGiaoHang
+                                </td>
+                                <td class="px-6 py-4">
+                                    <form asp-controller="Admin"
+                                          asp-action="UpdateOrderStatus"
+                                          method="post"
+                                          class="flex items-center">
+
+                                        <input type="hidden" name="orderCode" value="@ord.MaDonHang" />
+
+                                        <select name="status"
+                                                onchange="this.form.submit()"
+                                                class="px-3 py-1.5 border rounded-lg text-xs font-bold
+                                            @(ord.TrangThai == "Chờ duyệt" ? "bg-orange-50 text-orange-600 border-orange-200"
+                                                : ord.TrangThai == "Đã duyệt" ? "bg-blue-50 text-blue-600 border-blue-200"
+                                                : ord.TrangThai == "Đã giao" ? "bg-green-50 text-green-600 border-green-200"
+                                                : "bg-gray-100 text-gray-500 border-gray-200")">
+
+                                            <option value="Chờ duyệt" selected="@(ord.TrangThai == "Chờ duyệt" ? "selected" : null)">Chờ duyệt</option>
+                                            <option value="Đã duyệt" selected="@(ord.TrangThai == "Đã duyệt" ? "selected" : null)">Đã duyệt</option>
+                                            <option value="Đã giao" selected="@(ord.TrangThai == "Đã giao" ? "selected" : null)">Đã giao</option>
+                                            <option value="Đã hủy" selected="@(ord.TrangThai == "Đã hủy" ? "selected" : null)">Đã hủy</option>
+
+                                        </select>
+
+                                    </form>
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    @{
+                                        var canDelete = ord.TrangThai != "Đã duyệt"
+                                                     && ord.TrangThai != "Đã giao";
+                                    }
+
+                                    @if (canDelete)
+                                    {
+                                        <form asp-controller="Admin"
+                                              asp-action="DeleteOrder"
+                                              method="post"
+                                              onsubmit="return confirm('Bạn chắc chắn muốn xoá đơn hàng này?');">
+
+                                            <input type="hidden"
+                                                   name="orderCode"
+                                                   value="@ord.MaDonHang" />
+
+                                            <button type="submit"
+                                                    class="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                                                Xóa
+                                            </button>
+
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-gray-400 text-xs">
+                                            Không thể xoá
+                                        </span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- 4. CUSTOMER CONTROL WORKSPACE -->
+    <div id="tab-customers" class="tab-content hidden space-y-6">
+
+        <h3 class="text-md font-bold text-gray-900">
+            Danh Sách Thành Viên
+        </h3>
+
+        <div class="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm">
+
+            <div class="overflow-x-auto">
+
+                <table class="w-full text-left border-collapse text-sm">
+
+                    <thead class="bg-gray-50 text-gray-400 uppercase text-xs font-bold">
+
+                        <tr>
+                            <th class="px-6 py-4">Mã KH</th>
+                            <th class="px-6 py-4">Họ tên</th>
+                            <th class="px-6 py-4">Email</th>
+                            <th class="px-6 py-4">Số điện thoại</th>
+                            <th class="px-6 py-4">Địa chỉ</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody class="divide-y divide-gray-100">
+
+                        @foreach (var c in customers)
+                        {
+                            <tr class="hover:bg-gray-50">
+
+                                <td class="px-6 py-4 font-bold text-blue-600">
+                                    @c.MaKhachHang
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    @c.TenKhachHang
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    @c.Email
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    @c.DienThoai
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    @c.DiaChi
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<!-- ================= MODAL PRODUCT ADD / UPDATE ================= -->
+<div id="product-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleProductModal(false)"></div>
+    <div class="relative bg-white w-full max-w-lg p-8 rounded-2xl shadow-2xl mx-4 transition-all max-h-[90vh] overflow-y-auto">
+        <button onclick="toggleProductModal(false)" class="absolute top-4 right-4 text-gray-400 hover:text-gray-900">
+            <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+
+        <h3 id="product-modal-title" class="text-xl font-extrabold text-gray-900 mb-6">Thêm Sản Phẩm Mới</h3>
+        
+        <form id="product-modal-form" asp-controller="Admin" asp-action="AddProduct" method="post" enctype="multipart/form-data" class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 tracking-wider mb-1.5 uppercase">Mã sản phẩm</label>
+                    <input type="text" id="prod-code" name="code" required placeholder="Ví dụ: ip-15" class="w-full px-4 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-red-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 tracking-wider mb-1.5 uppercase">Tên sản phẩm</label>
+                    <input type="text" id="prod-name" name="name" required placeholder="Tên model chi tiết..." class="w-full px-4 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-red-500">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 tracking-wider mb-1.5 uppercase">Đơn giá (VNĐ)</label>
+                    <input type="number" id="prod-price" name="price" required placeholder="Ví dụ: 19790000" class="w-full px-4 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-red-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 tracking-wider mb-1.5 uppercase">Danh mục</label>
+                    <select id="prod-cat" name="categoryCode" class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-red-500">
+                        @foreach (var cat in categories)
+                        {
+                            <option value="@cat.MaDanhMuc">@cat.TenDanhMuc</option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-gray-700 tracking-wider mb-1.5 uppercase">Mô tả chi tiết</label>
+                <textarea id="prod-desc" name="description" rows="3" placeholder="Đặc tả thông số cấu hình..." class="w-full px-4 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-red-500"></textarea>
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-gray-700 tracking-wider mb-1.5 uppercase">Tải tệp hình ảnh (.jpg / .png)</label>
+                <input type="file" name="imageFile" class="w-full text-xs text-gray-500 border border-gray-200 rounded-xl p-2 focus:outline-none focus:border-red-500">
+                <span class="text-[10px] text-gray-400 mt-1 block">Tải ảnh mới nếu bạn muốn thay đổi visual hiển thị, nếu bỏ trống hệ thống sẽ tự đặt ảnh mặc định.</span>
+            </div>
+
+            <button type="submit" class="w-full py-3 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-lg transition">Xác Nhận Lưu</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(element => {
+            element.classList.add('hidden');
+        });
+
+        const activeTab = document.getElementById(tabId);
+        if (activeTab) {
+            activeTab.classList.remove('hidden');
+        }
+
+        const buttons = [
+            'btn-tab-products',
+            'btn-tab-categories',
+            'btn-tab-orders',
+            'btn-tab-customers'
+        ];
+
+        buttons.forEach(id => {
+            const btnElem = document.getElementById(id);
+
+            if (!btnElem) return;
+
+            if (id === 'btn-' + tabId) {
+                btnElem.className = 'px-5 py-3 text-sm font-bold text-red-600 border-b-2 border-red-600 transition-colors focus:outline-none';
+            } else {
+                btnElem.className = 'px-5 py-3 text-sm font-bold text-gray-500 border-b-2 border-transparent hover:text-gray-900 transition-colors focus:outline-none';
+            }
+        });
+    }
+
+    function toggleProductModal(show) {
+        const modal = document.getElementById('product-modal');
+
+        if (show) {
+            modal.classList.remove('hidden');
+        } else {
+            modal.classList.add('hidden');
+        }
+    }
+
+    function showAddProductModal() {
+        document.getElementById('product-modal-title').innerText = "Thêm Sản Phẩm Mới";
+        document.getElementById('product-modal-form').action = "/Admin/AddProduct";
+
+        document.getElementById('prod-code').value = "";
+        document.getElementById('prod-code').readOnly = false;
+        document.getElementById('prod-name').value = "";
+        document.getElementById('prod-price').value = "";
+        document.getElementById('prod-desc').value = "";
+
+        toggleProductModal(true);
+    }
+
+    function fillEditProductModal(code, name, price, desc, category) {
+        document.getElementById('product-modal-title').innerText = "Cập Nhật Sản Phẩm";
+        document.getElementById('product-modal-form').action = "/Admin/EditProduct";
+
+        document.getElementById('prod-code').value = code;
+        document.getElementById('prod-code').readOnly = true;
+        document.getElementById('prod-name').value = name;
+        document.getElementById('prod-price').value = price;
+        document.getElementById('prod-desc').value = desc;
+        document.getElementById('prod-cat').value = category;
+
+        toggleProductModal(true);
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const params = new URLSearchParams(window.location.search);
+        const tab = params.get("tab");
+
+        if (tab === "orders") {
+            switchTab("tab-orders");
+        }
+        else if (tab === "categories") {
+            switchTab("tab-categories");
+        }
+        else if (tab === "customers") {
+            switchTab("tab-customers");
+        }
+        else {
+            switchTab("tab-products");
+        }
+    });
+</script>
