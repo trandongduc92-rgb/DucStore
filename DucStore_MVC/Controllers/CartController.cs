@@ -42,7 +42,8 @@ namespace DucStore_MVC.Controllers
                 Email = $"guest-{guestId}@ducstore.local",
                 MatKhau = "guest",
                 DienThoai = phone ?? string.Empty,
-                DiaChi = address ?? string.Empty
+                DiaChi = address ?? string.Empty,
+                NgayTao = DateTime.Now
             });
 
             return guestId;
@@ -158,6 +159,11 @@ namespace DucStore_MVC.Controllers
                     name = customer.TenKhachHang;
                     phone = customer.DienThoai;
                     address = customer.DiaChi;
+
+                    if (!db.KhachHang.Any(k => k.MaKhachHang == customerId))
+                    {
+                        db.KhachHang.Add(customer);
+                    }
                 }
                 else
                 {
@@ -210,6 +216,7 @@ namespace DucStore_MVC.Controllers
 
             return RedirectToAction("OrderSuccess", "Cart", new { orderCode = orderCode });
         }
+
         [HttpGet]
         public async Task<IActionResult> OrderSuccess(string orderCode)
         {
@@ -234,12 +241,9 @@ namespace DucStore_MVC.Controllers
             {
                 order.TrangThai = "Chờ xác nhận thanh toán";
                 await _dbService.SaveDatabaseAsync(db);
-
-                TempData["SuccessMessage"] = "Đã gửi thông báo chuyển khoản cho Admin. Vui lòng chờ xác nhận.";
             }
 
             return RedirectToAction("OrderSuccess", "Cart", new { orderCode = orderCode });
         }
     }
-
 }

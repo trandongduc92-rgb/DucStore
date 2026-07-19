@@ -35,7 +35,7 @@ namespace DucStore_MVC.Controllers
         public async Task<IActionResult> Register(string name, string email, string password, string phone, string address)
         {
             var db = await _dbService.GetDatabaseAsync();
-            
+
             if (db.KhachHang.Any(k => k.Email.Equals(email, StringComparison.OrdinalIgnoreCase)))
             {
                 TempData["ErrorMessage"] = "Email này đã được đăng ký tài khoản!";
@@ -49,7 +49,8 @@ namespace DucStore_MVC.Controllers
                 Email = email,
                 MatKhau = password,
                 DienThoai = phone,
-                DiaChi = address
+                DiaChi = address,
+                NgayTao = DateTime.Now
             };
 
             db.KhachHang.Add(newCust);

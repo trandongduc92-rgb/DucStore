@@ -31,11 +31,11 @@ namespace DucStore_MVC.Services
             _filePath = Path.Combine(env.ContentRootPath, "Data", "db.json");
             _imagesPath = Path.Combine(env.WebRootPath, "images");
 
-            // Kiểm tra xem có cấu hình Connection String của SQL Server hay không
+
             var connStr = configuration.GetConnectionString("DefaultConnection");
             _useSqlServer = !string.IsNullOrEmpty(connStr);
 
-            // Tạo thư mục nếu chưa tồn tại
+
             var dir = Path.GetDirectoryName(_filePath);
             if (dir != null && !Directory.Exists(dir))
             {
@@ -76,13 +76,13 @@ namespace DucStore_MVC.Services
                 }
                 catch (Exception ex)
                 {
-                    //Console.WriteLine($"SQL Server Get Error: {ex.Message}. Falling back to db.json..."); dùng db ở sql
+
                     throw new Exception("Không kết nối được SQL Server. Project đang bắt buộc dùng SQL, không dùng db.json nữa.", ex);
                 }
 
             }
 
-            // Fallback chế độ JSON file
+
             if (!File.Exists(_filePath))
             {
                 return new FullDatabase();
@@ -120,7 +120,7 @@ namespace DucStore_MVC.Services
                     {
                         var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-                        // 1. Đồng bộ DanhMuc
+
                         var existingDanhMuc = await context.DanhMuc.ToListAsync();
                         foreach (var item in db.DanhMuc)
                         {
@@ -134,7 +134,7 @@ namespace DucStore_MVC.Services
                                 context.DanhMuc.Remove(existing);
                         }
 
-                        // 2. Đồng bộ SanPham
+
                         var existingSanPham = await context.SanPham.ToListAsync();
                         foreach (var item in db.SanPham)
                         {
@@ -148,7 +148,7 @@ namespace DucStore_MVC.Services
                                 context.SanPham.Remove(existing);
                         }
 
-                        // 3. Đồng bộ KhachHang
+
                         var existingKhachHang = await context.KhachHang.ToListAsync();
                         foreach (var item in db.KhachHang)
                         {
@@ -162,7 +162,7 @@ namespace DucStore_MVC.Services
                                 context.KhachHang.Remove(existing);
                         }
 
-                        // 4. Đồng bộ DonHang
+
                         var existingDonHang = await context.DonHang.ToListAsync();
                         foreach (var item in db.DonHang)
                         {
@@ -176,7 +176,7 @@ namespace DucStore_MVC.Services
                                 context.DonHang.Remove(existing);
                         }
 
-                        // 5. Đồng bộ ChiTietDonHang
+
                         var existingChiTiet = await context.ChiTietDonHang.ToListAsync();
                         foreach (var item in db.ChiTietDonHang)
                         {
@@ -190,7 +190,7 @@ namespace DucStore_MVC.Services
                                 context.ChiTietDonHang.Remove(existing);
                         }
 
-                        // 6. Đồng bộ TaiKhoanAdmin
+
                         var existingAdmin = await context.TaiKhoanAdmin.ToListAsync();
                         foreach (var item in db.TaiKhoanAdmin)
                         {
@@ -210,12 +210,12 @@ namespace DucStore_MVC.Services
                 }
                 catch (Exception ex)
                 {
-                    //Console.WriteLine($"SQL Server Save Error: {ex.Message}. Falling back to db.json..."); lôi thì mở này ra
+
                     throw new Exception("Không lưu được vào SQL Server. Project đang bắt buộc dùng SQL, không dùng db.json nữa.", ex);
                 }
             }
 
-            // Fallback chế độ JSON file
+
             try
             {
                 var options = new JsonSerializerOptions

@@ -28,15 +28,49 @@ namespace DucStore_MVC.Controllers
             }
 
             var db = await _dbService.GetDatabaseAsync();
+            var validStatuses = new[] { "đã duyệt", "đã giao" };
 
-            // Calculate Statistics
-            // Calculate Statistics
+            foreach (var order in db.DonHang)
+            {
+                var status = order.TrangThai?.Trim().ToLower();
+
+                if (validStatuses.Contains(status) &&
+                    !db.KhachHang.Any(k => k.MaKhachHang == order.MaKhachHang))
+                {
+                    db.KhachHang.Add(new KhachHang
+                    {
+                        MaKhachHang = order.MaKhachHang,
+                        TenKhachHang = order.TenKhachHang,
+                        Email = $"guest-{order.MaKhachHang}@ducstore.local",
+                        MatKhau = "guest",
+                        DienThoai = "",
+                        DiaChi = order.DiaChiGiaoHang,
+                        NgayTao = order.NgayDat
+                    });
+                }
+            }
+
+            await _dbService.SaveDatabaseAsync(db);
+
+            var approvedCustomerIds = db.DonHang
+                .Where(d =>
+                    d.TrangThai != null &&
+                    validStatuses.Contains(d.TrangThai.Trim().ToLower()))
+                .Select(d => d.MaKhachHang)
+                .Distinct()
+                .ToList();
+
+            var customerList = db.KhachHang
+    .Where(k =>
+        !k.Email.StartsWith("guest-") ||
+        approvedCustomerIds.Contains(k.MaKhachHang))
+    .OrderByDescending(k => k.NgayTao)
+    .ToList();
+
             ViewBag.TotalProducts = db.SanPham.Count;
 
-            // Tổng số hóa đơn
             ViewBag.TotalOrders = db.DonHang.Count;
 
-            // Hóa đơn đang chờ duyệt
             ViewBag.PendingOrders = db.DonHang.Count(d =>
     d.TrangThai != null &&
     (
@@ -45,16 +79,10 @@ namespace DucStore_MVC.Controllers
     )
 );
 
-            // Tổng số khách hàng / thành viên đăng ký
-            // Tổng số khách hàng / thành viên đăng ký
-            ViewBag.TotalCustomers = db.KhachHang.Count;
+            ViewBag.TotalCustomers = customerList.Count;
 
-            // Danh sách thành viên / khách hàng
-            ViewBag.Customers = db.KhachHang
-                .OrderByDescending(k => k.MaKhachHang)
-                .ToList();
+            ViewBag.Customers = customerList;
 
-            // Tổng doanh thu chỉ tính đơn đã duyệt hoặc đã giao
             ViewBag.TotalRevenue = db.DonHang
                 .Where(d =>
                     d.TrangThai != null &&
@@ -64,7 +92,6 @@ namespace DucStore_MVC.Controllers
                     )
                 )
                 .Sum(d => d.TongTien);
-            // Dữ liệu hiển thị cho Dashboard
             ViewBag.RecentOrders = db.DonHang
                 .OrderByDescending(d => d.NgayDat)
                 .Take(5)
@@ -86,7 +113,6 @@ namespace DucStore_MVC.Controllers
             return View();
         }
 
-        // --- MANAGING PRODUCTS ---
 
         [HttpPost]
         public async Task<IActionResult> AddProduct(string code, string name, decimal price, string description, string categoryCode, IFormFile? imageFile)
@@ -180,7 +206,6 @@ namespace DucStore_MVC.Controllers
             return RedirectToAction("Index");
         }
 
-        // --- MANAGING CATEGORIES ---
 
         [HttpPost]
         public async Task<IActionResult> AddCategory(string code, string name)
@@ -238,7 +263,6 @@ namespace DucStore_MVC.Controllers
             return RedirectToAction("Index");
         }
 
-        // --- MANAGING ORDERS ---
 
 
         [HttpPost]
@@ -274,17 +298,14 @@ namespace DucStore_MVC.Controllers
 
             var status = target.TrangThai?.Trim().ToLower();
 
-            // Chỉ cho xoá đơn chưa duyệt / chưa giao
             if (status == "đã duyệt" || status == "đã giao")
             {
                 TempData["ErrorMessage"] = "Đơn đã thanh toán hoặc đã giao, không thể xoá khỏi dữ liệu!";
                 return RedirectToAction("Index", new { tab = "orders" });
             }
 
-            // Xoá chi tiết đơn hàng trước
             db.ChiTietDonHang.RemoveAll(c => c.MaDonHang == orderCode);
 
-            // Xoá đơn hàng
             db.DonHang.Remove(target);
 
             await _dbService.SaveDatabaseAsync(db);

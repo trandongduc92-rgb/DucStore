@@ -27,6 +27,7 @@ namespace DucStore_MVC.Models
         public string MatKhau { get; set; } = string.Empty;
         public string DienThoai { get; set; } = string.Empty;
         public string DiaChi { get; set; } = string.Empty;
+        public DateTime NgayTao { get; set; } = DateTime.Now;
     }
 
     public class DonHang
@@ -36,9 +37,9 @@ namespace DucStore_MVC.Models
         public string TenKhachHang { get; set; } = string.Empty;
         public DateTime NgayDat { get; set; } = DateTime.Now;
         public decimal TongTien { get; set; }
-        public string TrangThai { get; set; } = "Chờ duyệt"; // "Chờ duyệt", "Đã duyệt", "Đã giao", "Đã hủy"
+        public string TrangThai { get; set; } = "Chờ duyệt";
         public string DiaChiGiaoHang { get; set; } = string.Empty;
-        public string HinhThucThanhToan { get; set; } = "Chuyển khoản"; // "Chuyển khoản" hoặc "Nhận tại cửa hàng"
+        public string HinhThucThanhToan { get; set; } = "Chuyển khoản";
     }
 
     public class ChiTietDonHang
@@ -67,18 +68,14 @@ namespace DucStore_MVC.Models
         public List<TaiKhoanAdmin> TaiKhoanAdmin { get; set; } = new();
     }
 
-    // Model for Cart Item in Session
     public class CartItem
     {
         public SanPham SanPham { get; set; } = new();
         public int SoLuong { get; set; }
-
         public string DungLuong { get; set; } = "128GB";
-
         public decimal GiaDaChon { get; set; }
 
         public string MaGioHang => $"{SanPham.MaSanPham}_{DungLuong}";
-
         public decimal ThanhTien => GiaDaChon * SoLuong;
     }
 }

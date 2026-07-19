@@ -20,7 +20,6 @@ namespace DucStore_MVC.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configure table mapping keys and names if needed
             modelBuilder.Entity<DanhMuc>().HasKey(d => d.MaDanhMuc);
             modelBuilder.Entity<SanPham>().HasKey(s => s.MaSanPham);
             modelBuilder.Entity<KhachHang>().HasKey(k => k.MaKhachHang);
@@ -28,7 +27,6 @@ namespace DucStore_MVC.Data
             modelBuilder.Entity<ChiTietDonHang>().HasKey(c => c.MaChiTiet);
             modelBuilder.Entity<TaiKhoanAdmin>().HasKey(a => a.TenDangNhap);
 
-            // Configure relations
             modelBuilder.Entity<SanPham>()
                 .HasOne<DanhMuc>()
                 .WithMany()

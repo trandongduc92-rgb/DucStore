@@ -1,6 +1,6 @@
 @{
     Layout = "_Layout";
-    
+
     var totalProducts = ViewBag.TotalProducts;
     var totalOrders = ViewBag.TotalOrders;
     var pendingOrders = ViewBag.PendingOrders;
@@ -14,9 +14,7 @@
     var customers = ViewBag.Customers as List<DucStore_MVC.Models.KhachHang> ?? new List<KhachHang>();
 }
 
-<!-- ADMIN MASTER PANEL -->
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-    <!-- Admin Header -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-100 pb-6 mb-8">
         <div>
             <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight flex items-center space-x-2">
@@ -32,9 +30,7 @@
         </div>
     </div>
 
-    <!-- STATS WIDGETS GROUP -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-        <!-- Revenue Stat -->
         <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-6 text-white shadow-lg shadow-blue-500/15">
             <div class="flex justify-between items-center opacity-85">
                 <span class="text-xs font-bold uppercase tracking-wider">Tổng Doanh Thu</span>
@@ -44,7 +40,6 @@
             <p class="text-[10px] mt-1.5 opacity-75">Tính từ đơn "Đã duyệt" / "Đã giao"</p>
         </div>
 
-        <!-- Orders Stat -->
         <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm flex items-center justify-between">
             <div>
                 <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block">Hóa Đơn</span>
@@ -56,7 +51,6 @@
             </div>
         </div>
 
-        <!-- Products Stat -->
         <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm flex items-center justify-between">
             <div>
                 <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block">Sản Phẩm</span>
@@ -68,7 +62,6 @@
             </div>
         </div>
 
-        <!-- Customers Stat -->
         <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm flex items-center justify-between">
             <div>
                 <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block">Thành Viên</span>
@@ -81,7 +74,6 @@
         </div>
     </div>
 
-    <!-- WORKSPACE TAPPING SWITCHER -->
     <div class="flex border-b border-gray-200 mb-8 space-x-4">
         <button onclick="switchTab('tab-products')" id="btn-tab-products" class="px-5 py-3 text-sm font-bold text-red-600 border-b-2 border-red-600 transition-colors focus:outline-none">
             Quản Lý Sản Phẩm (@totalProducts)
@@ -98,9 +90,6 @@
         </button>
     </div>
 
-    <!-- ================= CONTROLS VIEW STAGES ================= -->
-
-    <!-- 1. PRODUCT CONTROL WORKSPACE -->
     <div id="tab-products" class="tab-content space-y-6">
         <div class="flex justify-between items-center">
             <h3 class="text-md font-bold text-gray-900">Danh Sách Sản Phẩm</h3>
@@ -158,10 +147,8 @@
         </div>
     </div>
 
-    <!-- 2. CATEGORY CONTROL WORKSPACE -->
     <div id="tab-categories" class="tab-content hidden space-y-6">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Add category block (left) -->
             <div class="bg-white border border-gray-100 p-6 rounded-2xl shadow-sm h-fit">
                 <h3 class="text-sm font-bold text-gray-900 mb-4">Thêm Danh Mục Mới</h3>
                 <form asp-controller="Admin" asp-action="AddCategory" method="post" class="space-y-4">
@@ -177,7 +164,6 @@
                 </form>
             </div>
 
-            <!-- List table block (right) -->
             <div class="lg:col-span-2 bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm h-fit">
                 <table class="w-full text-left border-collapse text-sm">
                     <thead class="bg-gray-50 text-gray-400 text-xs font-bold uppercase border-b border-gray-100">
@@ -209,7 +195,6 @@
         </div>
     </div>
 
-    <!-- 3. ORDERS CONTROL WORKSPACE -->
     <div id="tab-orders" class="tab-content hidden space-y-6">
         <h3 class="text-md font-bold text-gray-900">Danh Sách Hóa Đơn</h3>
         <div class="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm">
@@ -314,7 +299,6 @@
             </div>
         </div>
     </div>
-    <!-- 4. CUSTOMER CONTROL WORKSPACE -->
     <div id="tab-customers" class="tab-content hidden space-y-6">
 
         <h3 class="text-md font-bold text-gray-900">
@@ -379,7 +363,6 @@
     </div>
 </div>
 
-<!-- ================= MODAL PRODUCT ADD / UPDATE ================= -->
 <div id="product-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
     <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleProductModal(false)"></div>
     <div class="relative bg-white w-full max-w-lg p-8 rounded-2xl shadow-2xl mx-4 transition-all max-h-[90vh] overflow-y-auto">
@@ -388,7 +371,7 @@
         </button>
 
         <h3 id="product-modal-title" class="text-xl font-extrabold text-gray-900 mb-6">Thêm Sản Phẩm Mới</h3>
-        
+
         <form id="product-modal-form" asp-controller="Admin" asp-action="AddProduct" method="post" enctype="multipart/form-data" class="space-y-4">
             <div class="grid grid-cols-2 gap-4">
                 <div>
@@ -501,7 +484,7 @@
         toggleProductModal(true);
     }
 
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         const params = new URLSearchParams(window.location.search);
         const tab = params.get("tab");
 
